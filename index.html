@@ -1,478 +1,757 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Auto-Post 100 — ระบบควบคุมบอทโพสต์อสังหาฯ อัตโนมัติ (AI Agentic Control Panel)</title>
-  <meta name="description" content="ระบบบริหารจัดการโฟลเดอร์ทรัพย์สิน ปั่นคำโฆษณา SEO 5 สไตล์ และสั่งรันบอทโพสต์ ดัน ลบประกาศอสังหาฯ 100 เว็บไซต์อัตโนมัติ" />
+  <title>Auto-Post 100 — ศูนย์ควบคุมบอทโพสต์อสังหาฯ</title>
+  <meta name="description" content="ศูนย์ควบคุมบอทโพสต์ ดัน และลบประกาศอสังหาฯ 100 เว็บไซต์ พร้อม AI ปั่นคำโฆษณา 5 สไตล์" />
+  <meta name="theme-color" content="#0b1b2f" />
   <style>
-/* AI Agentic Auto-Post 100 — Command Center Vanilla CSS Design System */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Auto-Post 100 Command Center
+   Design System: Design Samurai (nattagidgig-hash/design-samurai)
+   Tone: Blue Navy · Semantic Tokens (6 families) · Light + Dark from day one
+   Rules: no raw Hex in components · 4px spacing scale · Icon = Font + 2px · WCAG AA */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
+/* ---------- 1. Primitive palette (Navy scale) — only referenced by tokens ---------- */
 :root {
-  --bg-surface: #f7f6f2;
-  --bg-panel: #ffffff;
-  --bg-subtle: #efede7;
-  --bg-active: #e5e2d9;
-  --text-primary: #181816;
-  --text-secondary: #575652;
-  --text-muted: #85837d;
-  --border-hairline: #dfdcd3;
-  --border-strong: #c7c3b8;
+  --navy-950: #06101d;
+  --navy-900: #0b1b2f;
+  --navy-850: #0f2440;
+  --navy-800: #13304f;
+  --navy-700: #1b3f66;
+  --navy-600: #24507f;
+  --navy-500: #2f6fb8;
+  --navy-400: #5b8fd0;
+  --navy-300: #9dbbe2;
+  --navy-200: #c9d8ec;
+  --navy-100: #e3ebf6;
+  --navy-50:  #f3f6fb;
+  --slate-600: #44556d;
+  --slate-500: #5d6d84;
+  --slate-400: #8a99ad;
+  --white: #ffffff;
 
-  --brand-primary: #14532d;
-  --brand-primary-hover: #166534;
-  --brand-primary-fg: #ffffff;
-
-  --status-online-bg: #dcfce7;
-  --status-online-fg: #166534;
-  --status-warn-bg: #fef3c7;
-  --status-warn-fg: #92400e;
-  --status-danger-bg: #fee2e2;
-  --status-danger-fg: #991b1b;
-  --status-info-bg: #e0f2fe;
-  --status-info-fg: #075985;
-
-  --font-sans: 'IBM Plex Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --radius-sm: 4px;
-  --radius-md: 6px;
+  --green-700: #146c43; --green-100: #e3f3ea; --green-300: #7fd1a6; --green-900: #0d2a1e;
+  --amber-700: #8a5a00; --amber-100: #fff3d6; --amber-300: #f2c46b; --amber-900: #2e2209;
+  --red-700:   #b42318; --red-100:   #fdecea; --red-300:   #f4a39b; --red-900:   #3a1311;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* ---------- 2. Semantic tokens — Light ---------- */
+:root {
+  /* bg */
+  --color-bg: var(--navy-50);
+  --color-bg-subtle: var(--navy-100);
+  --color-bg-header: var(--navy-900);
+  /* surface */
+  --color-bg-surface: var(--white);
+  --color-bg-surface-hover: #f6f9fd;
+  --color-bg-surface-selected: var(--navy-100);
+  /* fill */
+  --color-bg-fill: var(--navy-800);
+  --color-bg-fill-hover: var(--navy-700);
+  --color-bg-fill-active: var(--navy-900);
+  --color-bg-fill-on-header: var(--navy-500);
+  --color-bg-fill-on-header-hover: var(--navy-400);
+  /* text */
+  --color-text: var(--navy-900);
+  --color-text-muted: var(--slate-600);
+  --color-text-subtle: var(--slate-500);
+  --color-text-on-fill: var(--white);
+  --color-text-on-header: var(--white);
+  --color-text-on-header-muted: var(--navy-300);
+  --color-text-link: var(--navy-600);
+  /* border */
+  --color-border: var(--navy-200);
+  --color-border-strong: var(--navy-300);
+  --color-border-on-header: var(--navy-700);
+  --color-focus-ring: var(--navy-500);
+  /* icon */
+  --color-icon: var(--navy-700);
+  --color-icon-muted: var(--slate-500);
+  --color-icon-on-fill: var(--white);
+  /* status */
+  --color-success-bg: var(--green-100); --color-success-text: var(--green-700);
+  --color-warning-bg: var(--amber-100); --color-warning-text: var(--amber-700);
+  --color-danger-bg:  var(--red-100);   --color-danger-text:  var(--red-700);
+  --color-danger-border: var(--red-300);
+  --color-info-bg: var(--navy-100);     --color-info-text: var(--navy-700);
+
+  /* spacing (4px scale only) */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-12: 48px;
+  /* radius */
+  --radius-s: 4px; --radius-m: 8px; --radius-l: 12px; --radius-pill: 999px;
+  /* font */
+  --font-sans: 'IBM Plex Sans Thai', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-12: 12px; --font-13: 13px; --font-14: 14px; --font-16: 16px;
+  --font-18: 18px; --font-20: 20px; --font-24: 24px; --font-32: 32px;
+  /* shadow — elevated surfaces only */
+  --shadow-sm: 0 1px 2px rgba(11, 27, 47, 0.06);
+  --shadow-md: 0 4px 12px rgba(11, 27, 47, 0.10);
+  /* motion */
+  --motion-fast: 120ms;
+  --motion-base: 180ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+
+/* ---------- 3. Semantic tokens — Dark (variable swap, not redesign) ---------- */
+[data-theme="dark"] {
+  --color-bg: var(--navy-950);
+  --color-bg-subtle: var(--navy-900);
+  --color-bg-header: var(--navy-950);
+  --color-bg-surface: var(--navy-900);
+  --color-bg-surface-hover: var(--navy-850);
+  --color-bg-surface-selected: var(--navy-800);
+  --color-bg-fill: var(--navy-500);
+  --color-bg-fill-hover: var(--navy-400);
+  --color-bg-fill-active: var(--navy-600);
+  --color-text: var(--navy-50);
+  --color-text-muted: var(--navy-200);
+  --color-text-subtle: var(--slate-400);
+  --color-text-link: var(--navy-300);
+  --color-border: var(--navy-800);
+  --color-border-strong: var(--navy-700);
+  --color-border-on-header: var(--navy-800);
+  --color-focus-ring: var(--navy-400);
+  --color-icon: var(--navy-300);
+  --color-icon-muted: var(--slate-400);
+  --color-success-bg: var(--green-900); --color-success-text: var(--green-300);
+  --color-warning-bg: var(--amber-900); --color-warning-text: var(--amber-300);
+  --color-danger-bg:  var(--red-900);   --color-danger-text:  var(--red-300);
+  --color-danger-border: var(--red-700);
+  --color-info-bg: var(--navy-800);     --color-info-text: var(--navy-200);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- 4. Base ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--bg-surface);
-  color: var(--text-primary);
-  font-size: 14px;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--font-14);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  transition: background-color var(--motion-base) var(--ease-out), color var(--motion-base) var(--ease-out);
 }
 
-/* Header & Top Navigation */
+a { color: var(--color-text-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Icon — Lucide sprite. Icon = Font + 2px, stroke 1.5–2 */
+.icon {
+  width: 16px; height: 16px;
+  flex: none;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.icon-l { width: 20px; height: 20px; stroke-width: 2; }
+.icon-xl { width: 24px; height: 24px; stroke-width: 2; }
+
+/* ---------- 5. Header (navy anchor) ---------- */
 .app-header {
-  background-color: var(--bg-panel);
-  border-bottom: 1px solid var(--border-hairline);
-  padding: 14px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
-
-.brand-group {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-}
-
-.brand-group h1 {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--text-primary);
-}
-
-.brand-subtitle {
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Navigation Tabs */
-.nav-bar {
-  background-color: var(--bg-panel);
-  border-bottom: 1px solid var(--border-hairline);
-  padding: 0 24px;
-  display: flex;
-  gap: 24px;
-}
-
-.nav-tab {
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  padding: 11px 4px;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-
-.nav-tab:hover {
-  color: var(--text-primary);
-}
-
-.nav-tab.active {
-  color: var(--brand-primary);
-  border-bottom-color: var(--brand-primary);
-  font-weight: 600;
-}
-
-/* Main Workspace Container */
-.workspace {
-  max-width: 1360px;
-  margin: 0 auto;
-  padding: 20px 24px 48px;
-}
-
-/* Summary Strip */
-.metric-strip {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.metric-box {
-  background-color: var(--bg-panel);
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
-}
-
-.metric-label {
-  font-size: 12px;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.metric-value {
-  font-family: var(--font-mono);
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-top: 4px;
-}
-
-.metric-note {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
-/* Layout Panels */
-.panel {
-  background-color: var(--bg-panel);
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-md);
-  margin-bottom: 20px;
-  overflow: hidden;
-}
-
-.panel-header {
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--border-hairline);
+  background-color: var(--color-bg-header);
+  color: var(--color-text-on-header);
+  border-bottom: 1px solid var(--color-border-on-header);
+  padding: var(--space-3) var(--space-6);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  background-color: var(--bg-panel);
+  gap: var(--space-4);
+}
+
+.app-top { position: sticky; top: 0; z-index: 20; }
+
+.brand-group { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+
+.brand-mark {
+  width: 40px; height: 40px;
+  border-radius: var(--radius-m);
+  background-color: var(--color-bg-fill-on-header);
+  color: var(--color-icon-on-fill);
+  display: grid; place-items: center;
+  flex: none;
+}
+
+.brand-text { display: flex; flex-direction: column; min-width: 0; }
+
+.brand-group h1 {
+  font-size: var(--font-18);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.brand-subtitle {
+  font-size: var(--font-13);
+  color: var(--color-text-on-header-muted);
+}
+
+.header-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+
+/* ---------- 6. Navigation ---------- */
+.nav-bar {
+  background-color: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 var(--space-6);
+  display: flex;
+  gap: var(--space-1);
+  overflow-x: auto;
+}
+
+.nav-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 48px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0 var(--space-3);
+  font-family: var(--font-sans);
+  font-size: var(--font-14);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--motion-fast) var(--ease-out), border-color var(--motion-fast) var(--ease-out), background-color var(--motion-fast) var(--ease-out);
+}
+
+.nav-tab:hover { color: var(--color-text); background-color: var(--color-bg-surface-hover); }
+
+.nav-tab.active {
+  color: var(--color-text);
+  border-bottom-color: var(--color-bg-fill);
+  font-weight: 600;
+}
+.nav-tab.active .icon { color: var(--color-icon); }
+
+.nav-count {
+  font-family: var(--font-mono);
+  font-size: var(--font-12);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-muted);
+}
+.nav-tab.active .nav-count { background-color: var(--color-bg-fill); color: var(--color-text-on-fill); }
+
+/* ---------- 7. Workspace ---------- */
+.workspace {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-6) var(--space-12);
+}
+
+/* Metric strip — decision summary first */
+.metric-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.metric-box {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-l);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.metric-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--radius-m);
+  background-color: var(--color-info-bg);
+  color: var(--color-icon);
+  display: grid; place-items: center;
+  flex: none;
+}
+
+.metric-label { font-size: var(--font-13); color: var(--color-text-muted); font-weight: 500; }
+
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: var(--font-24);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.3;
+  margin-top: var(--space-1);
+}
+
+.metric-note { font-size: var(--font-12); color: var(--color-text-subtle); margin-top: var(--space-1); }
+
+/* ---------- 8. Panel (Card) ---------- */
+.panel {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-l);
+  margin-bottom: var(--space-6);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.panel-header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
 }
 
 .panel-title {
-  font-size: 15px;
+  font-size: var(--font-16);
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.panel-title .icon { color: var(--color-icon); }
+
+.panel-desc { font-size: var(--font-13); color: var(--color-text-muted); margin-top: var(--space-1); }
+
+.panel-body { padding: var(--space-5); }
+
+.panel-toolbar {
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-bg-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
 }
 
-.panel-body {
-  padding: 18px;
-}
+.toolbar-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
-/* Buttons & Inputs */
+/* ---------- 9. Button — Base / Purpose / Size / State ---------- */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 40px;
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: var(--font-14);
   font-weight: 500;
-  padding: 7px 13px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-strong);
-  background-color: var(--bg-panel);
-  color: var(--text-primary);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-m);
+  border: 1px solid var(--color-border-strong);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text);
   cursor: pointer;
-  transition: background-color 0.12s ease, border-color 0.12s ease;
+  white-space: nowrap;
+  transition: background-color var(--motion-fast) var(--ease-out), border-color var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-out);
 }
+.btn .icon { color: var(--color-icon); }
+.btn:hover { background-color: var(--color-bg-surface-hover); border-color: var(--color-icon-muted); }
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn.is-loading { opacity: 0.75; pointer-events: none; }
+.btn.is-loading .icon { animation: spin 0.8s linear infinite; }
 
-.btn:hover {
-  background-color: var(--bg-subtle);
-}
-
+/* Primary */
 .btn-primary {
-  background-color: var(--brand-primary);
-  border-color: var(--brand-primary);
-  color: var(--brand-primary-fg);
+  background-color: var(--color-bg-fill);
+  border-color: var(--color-bg-fill);
+  color: var(--color-text-on-fill);
+  font-weight: 600;
 }
+.btn-primary .icon { color: var(--color-icon-on-fill); }
+.btn-primary:hover { background-color: var(--color-bg-fill-hover); border-color: var(--color-bg-fill-hover); }
+.btn-primary:active { background-color: var(--color-bg-fill-active); }
 
-.btn-primary:hover {
-  background-color: var(--brand-primary-hover);
+/* Header variants (on navy) */
+.app-header .btn {
+  min-height: 44px;
+  background-color: transparent;
+  border-color: var(--color-border-on-header);
+  color: var(--color-text-on-header);
 }
+.app-header .btn .icon { color: var(--color-text-on-header-muted); }
+.app-header .btn:hover { background-color: var(--navy-800); border-color: var(--navy-600); }
+.app-header .btn-primary {
+  background-color: var(--color-bg-fill-on-header);
+  border-color: var(--color-bg-fill-on-header);
+}
+.app-header .btn-primary .icon { color: var(--color-icon-on-fill); }
+.app-header .btn-primary:hover { background-color: var(--color-bg-fill-on-header-hover); border-color: var(--color-bg-fill-on-header-hover); }
+.btn-icon-only { padding: 0; width: 44px; }
 
+/* Destructive */
 .btn-danger {
-  background-color: var(--status-danger-bg);
-  border-color: #fca5a5;
-  color: var(--status-danger-fg);
+  background-color: var(--color-danger-bg);
+  border-color: var(--color-danger-border);
+  color: var(--color-danger-text);
 }
+.btn-danger .icon { color: var(--color-danger-text); }
+.btn-danger:hover { background-color: var(--color-danger-bg); border-color: var(--color-danger-text); }
 
+/* Small / Chip */
 .btn-chip {
-  padding: 5px 10px;
-  font-size: 12px;
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  font-size: var(--font-13);
+  border-radius: var(--radius-pill);
 }
-
+.btn-chip .icon { width: 14px; height: 14px; }
 .btn-chip.active {
-  background-color: var(--brand-primary);
-  border-color: var(--brand-primary);
-  color: var(--brand-primary-fg);
+  background-color: var(--color-bg-fill);
+  border-color: var(--color-bg-fill);
+  color: var(--color-text-on-fill);
 }
+.btn-chip.active .icon { color: var(--color-icon-on-fill); }
 
+/* ---------- 10. Input ---------- */
 .input-control, .select-control, .textarea-control {
   font-family: var(--font-sans);
-  font-size: 13px;
-  padding: 7px 11px;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
-  background-color: var(--bg-panel);
-  color: var(--text-primary);
+  font-size: var(--font-14);
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-m);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text);
+  width: 100%;
+  transition: border-color var(--motion-fast) var(--ease-out), box-shadow var(--motion-fast) var(--ease-out);
 }
-
+.input-control::placeholder, .textarea-control::placeholder { color: var(--color-text-subtle); }
 .input-control:focus, .select-control:focus, .textarea-control:focus {
-  outline: 2px solid var(--brand-primary);
-  outline-offset: -1px;
+  outline: none;
+  border-color: var(--color-focus-ring);
+  box-shadow: 0 0 0 3px var(--color-info-bg);
 }
 
-/* Data Tables */
-.table-wrap {
-  width: 100%;
-  overflow-x: auto;
-  max-height: 520px;
-  overflow-y: auto;
-}
+.search-field { position: relative; margin-left: auto; width: 240px; }
+.search-field .icon { position: absolute; left: var(--space-3); top: 50%; transform: translateY(-50%); color: var(--color-icon-muted); pointer-events: none; }
+.search-field .input-control { padding-left: 36px; }
 
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 13px;
-}
+/* ---------- 11. Data table ---------- */
+.table-wrap { width: 100%; overflow: auto; max-height: 560px; }
+
+.data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: var(--font-13); }
 
 .data-table th {
   position: sticky;
   top: 0;
-  background-color: var(--bg-subtle);
-  color: var(--text-secondary);
+  z-index: 1;
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-muted);
+  font-size: var(--font-12);
   font-weight: 600;
-  padding: 9px 14px;
-  border-bottom: 1px solid var(--border-hairline);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
   white-space: nowrap;
 }
 
 .data-table td {
-  padding: 9px 14px;
-  border-bottom: 1px solid var(--border-hairline);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
 }
 
-.data-table tr:hover td {
-  background-color: #faf9f5;
+.data-table tbody tr { transition: background-color var(--motion-fast) var(--ease-out); }
+.data-table tbody tr:hover td { background-color: var(--color-bg-surface-hover); }
+
+.cell-domain { display: flex; align-items: center; gap: var(--space-2); font-weight: 600; color: var(--color-text); }
+.cell-muted { color: var(--color-text-muted); }
+.cell-actions { display: flex; gap: var(--space-1); }
+
+.mono { font-family: var(--font-mono); font-size: var(--font-12); }
+
+.empty-state {
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+  color: var(--color-text-muted);
 }
 
-.mono {
-  font-family: var(--font-mono);
-  font-size: 12px;
-}
-
-/* Status Badges */
+/* ---------- 12. Badge ---------- */
 .badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
-  font-size: 11px;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-12);
+  font-weight: 500;
   font-family: var(--font-mono);
+  white-space: nowrap;
+}
+.badge-online { background-color: var(--color-success-bg); color: var(--color-success-text); }
+.badge-warn   { background-color: var(--color-warning-bg); color: var(--color-warning-text); }
+.badge-info   { background-color: var(--color-info-bg);    color: var(--color-info-text); }
+.badge-danger { background-color: var(--color-danger-bg);  color: var(--color-danger-text); }
+
+.status-dot { width: 8px; height: 8px; border-radius: var(--radius-pill); background-color: currentColor; flex: none; }
+
+/* ---------- 13. Property hub & AI spinner ---------- */
+.split-grid { display: grid; grid-template-columns: 360px 1fr; gap: var(--space-6); }
+
+@media (max-width: 960px) {
+  .split-grid { grid-template-columns: 1fr; }
 }
 
-.badge-online {
-  background-color: var(--status-online-bg);
-  color: var(--status-online-fg);
+.section-label {
+  font-size: var(--font-13);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
 }
-
-.badge-warn {
-  background-color: var(--status-warn-bg);
-  color: var(--status-warn-fg);
-}
-
-.badge-info {
-  background-color: var(--status-info-bg);
-  color: var(--status-info-fg);
-}
-
-.badge-danger {
-  background-color: var(--status-danger-bg);
-  color: var(--status-danger-fg);
-}
-
-/* Two-Column Grid for Property Hub & AI Spinner */
-.split-grid {
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 18px;
-}
-
-@media (max-width: 900px) {
-  .split-grid {
-    grid-template-columns: 1fr;
-  }
-}
+.section-heading { font-size: var(--font-16); font-weight: 600; color: var(--color-text); }
 
 .prop-item {
-  padding: 12px 14px;
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-sm);
-  margin-bottom: 10px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid transparent;
+  border-radius: var(--radius-m);
+  margin-bottom: var(--space-2);
   cursor: pointer;
-  background-color: var(--bg-panel);
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  background-color: var(--color-bg-surface);
+  transition: border-color var(--motion-fast) var(--ease-out), background-color var(--motion-fast) var(--ease-out);
 }
-
-.prop-item:hover {
-  background-color: var(--bg-subtle);
-}
-
+.prop-item:hover { background-color: var(--color-bg-surface-hover); }
 .prop-item.active {
-  border-color: var(--brand-primary);
-  background-color: #f0fdf4;
+  border-color: var(--color-border-strong);
+  border-left-color: var(--color-bg-fill);
+  background-color: var(--color-bg-surface-selected);
 }
+.prop-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); }
+.prop-price { font-family: var(--font-mono); font-size: var(--font-14); font-weight: 600; color: var(--color-text); }
+.prop-title { font-size: var(--font-14); margin-top: var(--space-1); color: var(--color-text); }
+.prop-meta { font-size: var(--font-12); margin-top: var(--space-1); color: var(--color-text-subtle); }
 
 .spin-box {
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-sm);
-  padding: 14px;
-  margin-bottom: 12px;
-  background-color: #fcfbf9;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-l);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+  background-color: var(--color-bg-surface);
 }
+.spin-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); }
 
-.spin-title {
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: 6px;
-  color: var(--text-primary);
-}
+.spin-title { font-weight: 600; font-size: var(--font-14); margin-bottom: var(--space-2); color: var(--color-text); }
+.spin-desc { font-size: var(--font-13); color: var(--color-text-muted); margin-bottom: var(--space-3); }
 
 .spin-body {
   white-space: pre-wrap;
-  font-size: 13px;
-  color: var(--text-secondary);
-  background-color: var(--bg-panel);
-  padding: 10px 12px;
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-sm);
+  font-size: var(--font-13);
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-subtle);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-m);
 }
 
+/* Screenshot gallery */
+.shot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: var(--space-4); }
+.shot-card { margin-bottom: 0; display: flex; flex-direction: column; }
+.shot-card img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  background-color: var(--color-bg-subtle);
+  margin-top: auto;
+}
+
+/* Form */
+.form-panel { border-bottom: 1px solid var(--color-border); background-color: var(--color-bg-subtle); }
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-  margin-bottom: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
 }
+.form-field { display: flex; flex-direction: column; gap: var(--space-1); margin-bottom: var(--space-3); }
+.form-grid .form-field { margin-bottom: 0; }
+.form-field label { font-size: var(--font-13); font-weight: 500; color: var(--color-text-muted); }
+.field-pair { display: flex; gap: var(--space-2); }
+.form-actions { display: flex; gap: var(--space-2); justify-content: flex-end; }
 
-.form-field {
+/* Toast — feedback after action */
+.toast {
+  position: fixed;
+  right: var(--space-6);
+  bottom: var(--space-6);
+  z-index: 50;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 420px;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-m);
+  background-color: var(--color-bg-header);
+  color: var(--color-text-on-header);
+  font-size: var(--font-14);
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity var(--motion-base) var(--ease-out), transform var(--motion-base) var(--ease-out);
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+.tab-view { animation: fade-in var(--motion-base) var(--ease-out); }
+
+@keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
-.form-field label {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
+@media (max-width: 720px) {
+  .app-header, .nav-bar { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .workspace { padding: var(--space-4) var(--space-4) var(--space-12); }
+  .search-field { width: 100%; margin-left: 0; }
+  .app-top { position: relative; }
+  .header-actions .btn-label { display: none; }
 }
 
-.hidden {
-  display: none !important;
+.hidden { display: none !important; }
+
+/* Primary row action stays visible while the wide table scrolls horizontally */
+#view-sites .data-table th:last-child,
+#view-sites .data-table td:last-child {
+  position: sticky;
+  right: 0;
+  background-color: var(--color-bg-surface);
+  box-shadow: -1px 0 0 var(--color-border);
 }
+#view-sites .data-table th:last-child { background-color: var(--color-bg-subtle); z-index: 2; }
 
 </style>
 </head>
 <body>
-  <header class="app-header">
-    <div class="brand-group">
-      <h1>Auto-Post 100 Command Center</h1>
-      <span class="brand-subtitle">ระบบ AI Agentic โพสต์ · ดันประกาศ · ลบประกาศอสังหาฯ (Master 100 Active Sites)</span>
-    </div>
-    <div class="header-actions">
-      <button id="btn-run-dry-all" class="btn btn-primary">▶ สั่งรัน Dry-Run ครบ 100 เว็บ</button>
-      <button id="btn-run-bump-all" class="btn">↑ ดันประกาศรายวัน (Bump)</button>
-      <button id="btn-refresh-data" class="btn">↻ รีเฟรชสถานะ</button>
-    </div>
-  </header>
+  <!-- Lucide icon sprite (ISC License) — Design Samurai: no emoji, professional icons only -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-building" viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+    <symbol id="i-archive" viewBox="0 0 24 24"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.38 3.62a1 1 0 0 1 3 3L7.37 18.64a2 2 0 0 1-.86.5l-2.87.84a.5.5 0 0 1-.62-.62l.84-2.87a2 2 0 0 1 .5-.86z"/></symbol>
+  </svg>
 
-  <nav class="nav-bar" aria-label="เมนูหลัก">
-    <button class="nav-tab active" id="tab-btn-sites" data-tab="view-sites">1. ทะเบียน 100 เว็บพร้อมใช้ &amp; คิว Wave</button>
-    <button class="nav-tab" id="tab-btn-properties" data-tab="view-properties">2. โฟลเดอร์ทรัพย์บน Server &amp; AI ปั่นคำโพสต์</button>
-    <button class="nav-tab" id="tab-btn-lifecycle" data-tab="view-lifecycle">3. ประวัติการโพสต์ · ดัน · ลบประกาศ (SQLite DB)</button>
-    <button class="nav-tab" id="tab-btn-shots" data-tab="view-shots">4. ภาพหน้าจอบอท Playwright จริง (Dry-Run Verified)</button>
-    <button class="nav-tab" id="tab-btn-reserve" data-tab="view-reserve">5. คลังเว็บสำรอง &amp; Persistent Profile (+59 เว็บ)</button>
-  </nav>
+  <div class="app-top">
+    <header class="app-header">
+      <div class="brand-group">
+        <div class="brand-mark"><svg class="icon icon-l"><use href="#i-building"/></svg></div>
+        <div class="brand-text">
+          <h1>Auto-Post 100</h1>
+          <span class="brand-subtitle">ศูนย์ควบคุมบอทโพสต์ · ดัน · ลบประกาศอสังหาฯ 100 เว็บ</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-refresh-data" class="btn btn-icon-only" title="รีเฟรชสถานะ" aria-label="รีเฟรชสถานะ"><svg class="icon icon-l"><use href="#i-refresh"/></svg></button>
+        <button id="btn-theme-toggle" class="btn btn-icon-only" title="สลับโหมดมืด/สว่าง" aria-label="สลับโหมดมืด/สว่าง"><svg class="icon icon-l"><use href="#i-moon"/></svg></button>
+        <button id="btn-run-bump-all" class="btn"><svg class="icon"><use href="#i-arrow-up"/></svg><span class="btn-label">ดันประกาศวันนี้</span></button>
+        <button id="btn-run-dry-all" class="btn btn-primary"><svg class="icon"><use href="#i-play"/></svg><span class="btn-label">ทดสอบโพสต์ 100 เว็บ</span></button>
+      </div>
+    </header>
+
+    <nav class="nav-bar" aria-label="เมนูหลัก" role="tablist">
+      <button class="nav-tab active" id="tab-btn-sites" data-tab="view-sites" role="tab"><svg class="icon"><use href="#i-globe"/></svg>เว็บโพสต์<span class="nav-count" id="nav-count-sites">100</span></button>
+      <button class="nav-tab" id="tab-btn-properties" data-tab="view-properties" role="tab"><svg class="icon"><use href="#i-folder"/></svg>ทรัพย์ &amp; AI ปั่นคำ<span class="nav-count" id="nav-count-props">0</span></button>
+      <button class="nav-tab" id="tab-btn-lifecycle" data-tab="view-lifecycle" role="tab"><svg class="icon"><use href="#i-database"/></svg>ประวัติโพสต์ · ดัน · ลบ</button>
+      <button class="nav-tab" id="tab-btn-shots" data-tab="view-shots" role="tab"><svg class="icon"><use href="#i-camera"/></svg>ภาพหน้าจอบอท<span class="nav-count">8</span></button>
+      <button class="nav-tab" id="tab-btn-reserve" data-tab="view-reserve" role="tab"><svg class="icon"><use href="#i-archive"/></svg>เว็บสำรอง<span class="nav-count" id="nav-count-reserve">59</span></button>
+    </nav>
+  </div>
 
   <main class="workspace">
-    <!-- Top Metric Strip -->
+    <!-- Decision summary -->
     <section class="metric-strip" aria-label="ตัวชี้วัดภาพรวม">
       <div class="metric-box">
-        <div class="metric-label">ทะเบียนเว็บพร้อมโพสต์ (ONLINE 200)</div>
-        <div class="metric-value" id="metric-active-count">100 / 100</div>
-        <div class="metric-note">ลิสต์เดิม 42 เว็บ + ดึงจากบอทเก่ามาเติม 58 เว็บ</div>
+        <div class="metric-icon"><svg class="icon icon-l"><use href="#i-globe"/></svg></div>
+        <div>
+          <div class="metric-label">เว็บพร้อมโพสต์ (HTTP 200)</div>
+          <div class="metric-value" id="metric-active-count">100 / 100</div>
+          <div class="metric-note">ลิสต์เดิม 41 เว็บ + คัดจากบอทเก่า 59 เว็บ</div>
+        </div>
       </div>
       <div class="metric-box">
-        <div class="metric-label">กลุ่ม Template Family (1 โค้ดยิงยกแผง)</div>
-        <div class="metric-value" id="metric-family-count">33 เว็บ</div>
-        <div class="metric-note">ThaiClassifiedCMS (12) · WordPress (15) · SimpleAdd (6)</div>
+        <div class="metric-icon"><svg class="icon icon-l"><use href="#i-layers"/></svg></div>
+        <div>
+          <div class="metric-label">เว็บที่ใช้ Adapter ร่วมกัน</div>
+          <div class="metric-value" id="metric-family-count">33 เว็บ</div>
+          <div class="metric-note">ThaiClassified 12 · WordPress 15 · SimpleAdd 6</div>
+        </div>
       </div>
       <div class="metric-box">
-        <div class="metric-label">โฟลเดอร์ทรัพย์บนเครื่อง Server</div>
-        <div class="metric-value" id="metric-prop-count">2 รายการ</div>
-        <div class="metric-note">พร้อมปั่นคำโฆษณา AI 5 สไตล์ไม่ซ้ำกัน</div>
+        <div class="metric-icon"><svg class="icon icon-l"><use href="#i-folder"/></svg></div>
+        <div>
+          <div class="metric-label">โฟลเดอร์ทรัพย์บน Server</div>
+          <div class="metric-value" id="metric-prop-count">0 รายการ</div>
+          <div class="metric-note">แต่ละรายการมีคำโฆษณา 5 สไตล์</div>
+        </div>
       </div>
       <div class="metric-box">
-        <div class="metric-label">สถานะ Dry-Run / คิวงานในฐานข้อมูล</div>
-        <div class="metric-value" id="metric-db-ready">100 READY</div>
-        <div class="metric-note" id="metric-last-action">พร้อมยิงทดสอบราย Wave</div>
+        <div class="metric-icon"><svg class="icon icon-l"><use href="#i-activity"/></svg></div>
+        <div>
+          <div class="metric-label">สถานะคิวงาน</div>
+          <div class="metric-value" id="metric-db-ready">100 READY</div>
+          <div class="metric-note" id="metric-last-action">พร้อมทดสอบราย Wave</div>
+        </div>
       </div>
     </section>
 
-    <!-- TAB 1: MASTER 100 SITES & WAVE CONTROL -->
-    <section id="view-sites" class="tab-view">
+    <!-- TAB 1: MASTER 100 SITES -->
+    <section id="view-sites" class="tab-view" role="tabpanel">
       <div class="panel">
         <div class="panel-header">
           <div>
-            <div class="panel-title">ทะเบียน 100 เว็บอสังหาฯ ที่ออนไลน์จริง 100% (แบ่งตามตระกูล CMS &amp; Wave)</div>
+            <div class="panel-title"><svg class="icon icon-l"><use href="#i-globe"/></svg>ทะเบียน 100 เว็บที่ออนไลน์จริง</div>
+            <div class="panel-desc">แบ่งตามตระกูล CMS และลำดับ Wave — กดทดสอบหรือดันประกาศรายเว็บได้ทันที</div>
           </div>
-          <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
-            <button class="btn btn-chip active" data-fam="ALL" id="flt-fam-all">ทั้งหมด (100)</button>
-            <button class="btn btn-chip" data-fam="ModernSPA" id="flt-fam-spa">Wave 1: ModernSPA (14)</button>
-            <button class="btn btn-chip" data-fam="ThaiClassifiedCMS" id="flt-fam-thai">Wave 2A: ThaiClassifiedCMS (12)</button>
-            <button class="btn btn-chip" data-fam="WordPressClassified" id="flt-fam-wp">Wave 2B: WordPress (15)</button>
-            <button class="btn btn-chip" data-fam="SimpleAddPHP" id="flt-fam-simple">Wave 2C: SimpleAddPHP (6)</button>
-            <button class="btn btn-chip" data-fam="CustomPHP/Portal" id="flt-fam-custom">Wave 3: CustomPHP/Forum (53)</button>
-            <input type="text" id="site-search-input" class="input-control" placeholder="ค้นหาชื่อเว็บ / Path..." style="width:190px;" />
+        </div>
+        <div class="panel-toolbar">
+          <button class="btn btn-chip active" data-fam="ALL" id="flt-fam-all">ทั้งหมด 100</button>
+          <button class="btn btn-chip" data-fam="ModernSPA" id="flt-fam-spa">Wave 1 · ModernSPA 14</button>
+          <button class="btn btn-chip" data-fam="ThaiClassifiedCMS" id="flt-fam-thai">Wave 2A · ThaiClassified 12</button>
+          <button class="btn btn-chip" data-fam="WordPressClassified" id="flt-fam-wp">Wave 2B · WordPress 15</button>
+          <button class="btn btn-chip" data-fam="SimpleAddPHP" id="flt-fam-simple">Wave 2C · SimpleAdd 6</button>
+          <button class="btn btn-chip" data-fam="CustomPHP/Portal" id="flt-fam-custom">Wave 3 · Custom/Forum 53</button>
+          <div class="search-field">
+            <svg class="icon"><use href="#i-search"/></svg>
+            <input type="search" id="site-search-input" class="input-control" placeholder="ค้นหาโดเมนหรือ Path" aria-label="ค้นหาเว็บ" />
           </div>
         </div>
         <div class="table-wrap">
@@ -480,13 +759,13 @@ body {
             <thead>
               <tr>
                 <th>#</th>
-                <th>โดเมนเว็บไซต์</th>
+                <th>โดเมน</th>
                 <th>ที่มา</th>
-                <th>ตระกูลระบบ (CMS Family)</th>
-                <th>Path ล็อกอิน</th>
-                <th>Path ลงประกาศ (Post)</th>
-                <th>Path ดัน/ลบประกาศ</th>
-                <th>สั่งงานรายเว็บ</th>
+                <th>CMS Family</th>
+                <th>Login</th>
+                <th>Post</th>
+                <th>Bump / Delete</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody id="master-sites-tbody"></tbody>
@@ -495,19 +774,22 @@ body {
       </div>
     </section>
 
-    <!-- TAB 2: SERVER PROPERTY FOLDERS & AI CONTENT SPINNER -->
-    <section id="view-properties" class="tab-view hidden">
+    <!-- TAB 2: PROPERTY FOLDERS & AI SPINNER -->
+    <section id="view-properties" class="tab-view hidden" role="tabpanel">
       <div class="panel">
         <div class="panel-header">
-          <div class="panel-title">เพิ่มโฟลเดอร์ทรัพย์ใหม่ลงเครื่อง Server (data/properties/)</div>
-          <button id="btn-toggle-new-prop" class="btn btn-primary">+ สร้างโฟลเดอร์ทรัพย์ใหม่</button>
+          <div>
+            <div class="panel-title"><svg class="icon icon-l"><use href="#i-folder"/></svg>โฟลเดอร์ทรัพย์ &amp; คำโฆษณา AI</div>
+            <div class="panel-desc">อ่านจาก data/properties/ บน Server — เลือกทรัพย์ทางซ้าย ดูคำโฆษณา 5 สไตล์ทางขวา</div>
+          </div>
+          <button id="btn-toggle-new-prop" class="btn"><svg class="icon"><use href="#i-plus"/></svg>เพิ่มทรัพย์ใหม่</button>
         </div>
-        <div id="new-prop-form-wrap" class="panel-body hidden" style="border-bottom:1px solid var(--border-hairline); background-color:#faf9f5;">
+        <div id="new-prop-form-wrap" class="panel-body form-panel hidden">
           <form id="new-prop-form">
             <div class="form-grid">
               <div class="form-field">
-                <label for="inp-code">รหัสทรัพย์ (เช่น ZSK099)</label>
-                <input id="inp-code" name="code" class="input-control" required placeholder="ZSK099" />
+                <label for="inp-code">รหัสทรัพย์</label>
+                <input id="inp-code" name="code" class="input-control" required placeholder="เช่น ZSK099" />
               </div>
               <div class="form-field">
                 <label for="inp-listing-type">ประเภทประกาศ</label>
@@ -538,44 +820,47 @@ body {
               </div>
               <div class="form-field">
                 <label for="inp-bed">ห้องนอน / ห้องน้ำ</label>
-                <div style="display:flex; gap:6px;">
-                  <input id="inp-bed" name="bedrooms" type="number" class="input-control" value="3" style="width:50%" title="ห้องนอน" />
-                  <input id="inp-bath" name="bathrooms" type="number" class="input-control" value="2" style="width:50%" title="ห้องน้ำ" />
+                <div class="field-pair">
+                  <input id="inp-bed" name="bedrooms" type="number" class="input-control" value="3" title="ห้องนอน" aria-label="ห้องนอน" />
+                  <input id="inp-bath" name="bathrooms" type="number" class="input-control" value="2" title="ห้องน้ำ" aria-label="ห้องน้ำ" />
                 </div>
               </div>
               <div class="form-field">
                 <label for="inp-project">ชื่อโครงการ / หมู่บ้าน</label>
-                <input id="inp-project" name="project_name" class="input-control" placeholder="หมู่บ้าน..." />
+                <input id="inp-project" name="project_name" class="input-control" placeholder="เช่น หมู่บ้านพฤกษา" />
               </div>
               <div class="form-field">
-                <label for="inp-district">เขต/อำเภอ · จังหวัด</label>
-                <div style="display:flex; gap:6px;">
-                  <input id="inp-district" name="district" class="input-control" placeholder="เมืองนนทบุรี" style="width:50%" />
-                  <input id="inp-province" name="province" class="input-control" value="นนทบุรี" style="width:50%" />
+                <label for="inp-district">อำเภอ · จังหวัด</label>
+                <div class="field-pair">
+                  <input id="inp-district" name="district" class="input-control" placeholder="เมืองนนทบุรี" aria-label="อำเภอ" />
+                  <input id="inp-province" name="province" class="input-control" value="นนทบุรี" aria-label="จังหวัด" />
                 </div>
               </div>
             </div>
-            <div class="form-field" style="margin-bottom:12px;">
-              <label for="inp-title">หัวข้อทรัพย์หลัก</label>
-              <input id="inp-title" name="title" class="input-control" required placeholder="ขายบ้านเดี่ยว 2 ชั้น ทำเลดี..." />
+            <div class="form-field">
+              <label for="inp-title">หัวข้อประกาศหลัก</label>
+              <input id="inp-title" name="title" class="input-control" required placeholder="เช่น ขายบ้านเดี่ยว 2 ชั้น ใกล้รถไฟฟ้า" />
             </div>
-            <div class="form-field" style="margin-bottom:12px;">
-              <label for="inp-desc">รายละเอียดทรัพย์ &amp; สถานที่ใกล้เคียง</label>
-              <textarea id="inp-desc" name="description" rows="3" class="textarea-control" placeholder="ระบุจุดเด่น การต่อเติม สถานที่ใกล้เคียง เบอร์โทรติดต่อ..."></textarea>
+            <div class="form-field">
+              <label for="inp-desc">รายละเอียด &amp; สถานที่ใกล้เคียง</label>
+              <textarea id="inp-desc" name="description" rows="3" class="textarea-control" placeholder="จุดเด่น การต่อเติม สถานที่ใกล้เคียง เบอร์ติดต่อ"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary" id="btn-save-prop">บันทึกโฟลเดอร์ทรัพย์และปั่นคำโฆษณา AI ทันที</button>
+            <div class="form-actions">
+              <button type="button" class="btn" id="btn-cancel-prop">ยกเลิก</button>
+              <button type="submit" class="btn btn-primary" id="btn-save-prop"><svg class="icon"><use href="#i-pen"/></svg>บันทึกและสร้างคำโฆษณา</button>
+            </div>
           </form>
         </div>
         <div class="panel-body">
           <div class="split-grid">
             <div>
-              <div style="font-weight:600; margin-bottom:10px;">รายการโฟลเดอร์ทรัพย์บน Server</div>
+              <div class="section-label">รายการทรัพย์บน Server</div>
               <div id="property-list-container"></div>
             </div>
             <div>
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <div style="font-weight:600;" id="selected-prop-heading">คำโฆษณา SEO 5 สไตล์ที่ AI ปั่นให้ (ป้องกันเนื้อหาซ้ำ 100 เว็บ)</div>
-                <button class="btn btn-primary" id="btn-dryrun-selected-prop">▶ สั่งรัน Dry-Run ทรัพย์นี้ทั้ง 100 เว็บ</button>
+              <div class="section-label">
+                <span class="section-heading" id="selected-prop-heading">คำโฆษณา SEO 5 สไตล์</span>
+                <button class="btn btn-primary" id="btn-dryrun-selected-prop"><svg class="icon"><use href="#i-play"/></svg>ทดสอบโพสต์ทรัพย์นี้ 100 เว็บ</button>
               </div>
               <div id="spun-variants-container"></div>
             </div>
@@ -584,28 +869,31 @@ body {
       </div>
     </section>
 
-    <!-- TAB 3: LIFECYCLE DB (POST / BUMP / DELETE) -->
-    <section id="view-lifecycle" class="tab-view hidden">
+    <!-- TAB 3: LIFECYCLE DB -->
+    <section id="view-lifecycle" class="tab-view hidden" role="tabpanel">
       <div class="panel">
         <div class="panel-header">
-          <div class="panel-title">ฐานข้อมูลติดตามสถานะประกาศ (SQLite Lifecycle Tracking: โพสต์ · ดันประกาศ · ลบเมื่อขายแล้ว)</div>
-          <div style="display:flex; gap:8px;">
-            <button class="btn" id="btn-trigger-bump">↑ สั่งดันประกาศทั้งหมด (Bump All)</button>
-            <button class="btn btn-danger" id="btn-trigger-delete">✕ สั่งลบประกาศทรัพย์ที่ขายแล้ว (Delete Sold)</button>
+          <div>
+            <div class="panel-title"><svg class="icon icon-l"><use href="#i-database"/></svg>ประวัติประกาศ (SQLite)</div>
+            <div class="panel-desc">ติดตามสถานะ โพสต์ → ดันประกาศ → ลบเมื่อขายแล้ว รายเว็บ</div>
+          </div>
+          <div class="toolbar-actions">
+            <button class="btn" id="btn-trigger-bump"><svg class="icon"><use href="#i-arrow-up"/></svg>ดันประกาศทั้งหมด</button>
+            <button class="btn btn-danger" id="btn-trigger-delete"><svg class="icon"><use href="#i-trash"/></svg>ลบประกาศที่ขายแล้ว</button>
           </div>
         </div>
         <div class="table-wrap">
           <table class="data-table">
             <thead>
               <tr>
-                <th>ลำดับเว็บ</th>
+                <th>เว็บ #</th>
                 <th>รหัสทรัพย์</th>
-                <th>โดเมนเว็บไซต์</th>
-                <th>สถานะล่าสุด</th>
+                <th>โดเมน</th>
+                <th>สถานะ</th>
                 <th>คำสั่งล่าสุด</th>
-                <th>URL เป้าหมาย / ลิงก์ประกาศ</th>
-                <th>รายละเอียด (AI Variant &amp; CMS Family)</th>
-                <th>เวลาอัปเดต</th>
+                <th>URL ประกาศ</th>
+                <th>รายละเอียด</th>
+                <th>อัปเดต</th>
               </tr>
             </thead>
             <tbody id="lifecycle-tbody"></tbody>
@@ -614,74 +902,80 @@ body {
       </div>
     </section>
 
-    <!-- TAB 4: LIVE PLAYWRIGHT SCREENSHOTS -->
-    <section id="view-shots" class="tab-view hidden">
+    <!-- TAB 4: PLAYWRIGHT SCREENSHOTS -->
+    <section id="view-shots" class="tab-view hidden" role="tabpanel">
       <div class="panel">
         <div class="panel-header">
-          <div class="panel-title">ภาพถ่ายหน้าจอจริงจากบอท Playwright Chromium 159 Headless (รันผ่านครบ 36 เว็บใน 4 ตระกูลหลัก + Auto-Register)</div>
+          <div>
+            <div class="panel-title"><svg class="icon icon-l"><use href="#i-camera"/></svg>ภาพหน้าจอจริงจากบอท Playwright</div>
+            <div class="panel-desc">Chromium Headless ผ่านครบ 36 เว็บใน 4 ตระกูลหลัก + Auto-Register — หยุดที่ Publish Gate ทุกครั้ง</div>
+          </div>
         </div>
         <div class="panel-body">
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(380px, 1fr)); gap:16px;">
-            <div class="spin-box">
-              <div class="spin-title">#1 Thaihometown.com (ModernSPA — DRY_RUN_VERIFIED)</div>
-              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">บอทเปิดหน้าเข้าระบบสมาชิก /member/ และทดสอบกรอกข้อมูลสำเร็จ</p>
-              <img src="shots/shot_thaihometown.png" alt="Thaihometown Playwright Dry-Run" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+          <div class="shot-grid">
+            <div class="spin-box shot-card">
+              <div class="spin-head"><span class="spin-title">#1 Thaihometown.com</span><span class="badge badge-online"><svg class="icon"><use href="#i-check"/></svg>VERIFIED</span></div>
+              <p class="spin-desc">เปิดหน้าสมาชิก /member/ และกรอกข้อมูลทดสอบสำเร็จ</p>
+              <img src="shots/shot_thaihometown.png" alt="Thaihometown Playwright Dry-Run" loading="lazy" />
             </div>
-            <div class="spin-box">
-              <div class="spin-title">#13 Ennxo.com (Modern Portal — DRY_RUN_VERIFIED)</div>
-              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">บอทเปิดหน้าลงประกาศ /sell และเตรียมกรอกชื่อทรัพย์สำเร็จ</p>
-              <img src="shots/shot_ennxo.png" alt="Ennxo Playwright Dry-Run" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            <div class="spin-box shot-card">
+              <div class="spin-head"><span class="spin-title">#13 Ennxo.com</span><span class="badge badge-online"><svg class="icon"><use href="#i-check"/></svg>VERIFIED</span></div>
+              <p class="spin-desc">เปิดหน้าลงประกาศ /sell และเตรียมกรอกชื่อทรัพย์สำเร็จ</p>
+              <img src="shots/shot_ennxo.png" alt="Ennxo Playwright Dry-Run" loading="lazy" />
             </div>
-            <div class="spin-box">
-              <div class="spin-title">#57 AcnaraProperty.com (ตัวแทนกลุ่ม ThaiClassifiedCMS 12 เว็บ — 12/12 VERIFIED)</div>
-              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">ใช้ Adapter ตัวเดียวยิงผ่านครบทั้ง 12 เว็บ พร้อมระบบ Auto-Register 4/4 เว็บ</p>
-              <img src="shots/shot_acnaraproperty.png" alt="AcnaraProperty Playwright Dry-Run" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            <div class="spin-box shot-card">
+              <div class="spin-head"><span class="spin-title">#57 AcnaraProperty.com</span><span class="badge badge-online"><svg class="icon"><use href="#i-check"/></svg>12/12</span></div>
+              <p class="spin-desc">ตัวแทน ThaiClassifiedCMS — Adapter เดียวผ่านครบ 12 เว็บ + Auto-Register 4/4</p>
+              <img src="shots/shot_acnaraproperty.png" alt="AcnaraProperty Playwright Dry-Run" loading="lazy" />
             </div>
-            <div class="spin-box">
-              <div class="spin-title">#30 Thpostpop.com (ตัวแทนกลุ่ม WordPressClassified 15 เว็บ — 15/15 VERIFIED)</div>
-              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">ใช้ WordPressClassifiedAdapter ตัวเดียวยิงผ่านครบทั้ง 15 เว็บในเครือข่าย</p>
-              <img src="shots/shot_thpostpop.png" alt="Thpostpop Playwright Dry-Run" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            <div class="spin-box shot-card">
+              <div class="spin-head"><span class="spin-title">#30 Thpostpop.com</span><span class="badge badge-online"><svg class="icon"><use href="#i-check"/></svg>15/15</span></div>
+              <p class="spin-desc">ตัวแทน WordPressClassified — Adapter เดียวผ่านครบ 15 เว็บ</p>
+              <img src="shots/shot_thpostpop.png" alt="Thpostpop Playwright Dry-Run" loading="lazy" />
             </div>
-            <div class="spin-box">
-              <div class="spin-title">#86 Teedintong.com (ตัวแทนกลุ่ม SimpleAddPHP 6 เว็บ — 6/6 VERIFIED)</div>
-              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">หน้าเข้าสู่ระบบและลงประกาศขายที่ดินฟรี /add_listing.php</p>
-              <img src="shots/shot_teedintong.png" alt="Teedintong Playwright Dry-Run" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            <div class="spin-box shot-card">
+              <div class="spin-head"><span class="spin-title">#86 Teedintong.com</span><span class="badge badge-online"><svg class="icon"><use href="#i-check"/></svg>6/6</span></div>
+              <p class="spin-desc">ตัวแทน SimpleAddPHP — หน้าลงประกาศ /add_listing.php</p>
+              <img src="shots/shot_teedintong.png" alt="Teedintong Playwright Dry-Run" loading="lazy" />
             </div>
-            <div class="spin-box">
-              <div class="spin-title">#37 TeeSuay.com (CustomPHP Portal — DRY_RUN_VERIFIED)</div>
-              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">บอทเปิดหน้าสมาชิกและทดสอบกรอกข้อมูลก่อนถึง Publish Gate</p>
-              <img src="shots/shot_teesuay.png" alt="TeeSuay Playwright Dry-Run" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            <div class="spin-box shot-card">
+              <div class="spin-head"><span class="spin-title">#37 TeeSuay.com</span><span class="badge badge-online"><svg class="icon"><use href="#i-check"/></svg>VERIFIED</span></div>
+              <p class="spin-desc">เปิดหน้าสมาชิกและกรอกข้อมูลทดสอบก่อนถึง Publish Gate</p>
+              <img src="shots/shot_teesuay.png" alt="TeeSuay Playwright Dry-Run" loading="lazy" />
             </div>
-            <div class="spin-box">
-              <div class="spin-title">Visual Sentinel: ตรวจพบ PantipMarket.com ปิดตัวถาวรในหน้า /post/</div>
-              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">ระบบคัดออกอัตโนมัติและดึง Kaidee.com จากคลังสำรองขึ้นมาแทนให้ครบ 100 เว็บ</p>
-              <img src="shots/shot_pantipmarket.png" alt="PantipMarket Discontinued Notice" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            <div class="spin-box shot-card">
+              <div class="spin-head"><span class="spin-title">PantipMarket.com</span><span class="badge badge-danger">REPLACED</span></div>
+              <p class="spin-desc">Visual Sentinel พบประกาศปิดบริการหน้า /post/ — สลับ Kaidee.com จากคลังสำรองเข้าแทน</p>
+              <img src="shots/shot_pantipmarket.png" alt="PantipMarket Discontinued Notice" loading="lazy" />
             </div>
-            <div class="spin-box">
-              <div class="spin-title">Human-in-the-Loop Sentinel: ตรวจพบ Cloudflare บน PrakardProperty.com</div>
-              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">บอทหยุดอย่างปลอดภัยตามกฎเหล็ก เพื่อให้แอดมินกดยืนยันผ่าน Persistent Profile ครั้งแรก</p>
-              <img src="shots/shot_prakardproperty.png" alt="PrakardProperty Cloudflare Gate" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            <div class="spin-box shot-card">
+              <div class="spin-head"><span class="spin-title">PrakardProperty.com</span><span class="badge badge-warn"><svg class="icon"><use href="#i-shield"/></svg>HUMAN GATE</span></div>
+              <p class="spin-desc">พบ Cloudflare — บอทหยุดอย่างปลอดภัย รอแอดมินยืนยันผ่าน Persistent Profile ครั้งแรก</p>
+              <img src="shots/shot_prakardproperty.png" alt="PrakardProperty Cloudflare Gate" loading="lazy" />
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- TAB 5: RESERVE POOL (+59 SITES) -->
-    <section id="view-reserve" class="tab-view hidden">
+    <!-- TAB 5: RESERVE POOL -->
+    <section id="view-reserve" class="tab-view hidden" role="tabpanel">
       <div class="panel">
         <div class="panel-header">
-          <div class="panel-title">คลังเว็บสำรอง (+60 เว็บ: เว็บออนไลน์สำรอง 38 เว็บ + เว็บติด Cloudflare ใช้ Persistent Profile 22 เว็บ)</div>
+          <div>
+            <div class="panel-title"><svg class="icon icon-l"><use href="#i-archive"/></svg>คลังเว็บสำรอง</div>
+            <div class="panel-desc">ใช้สลับเข้าแทนเมื่อเว็บหลักล่ม — เว็บที่ติด Cloudflare ต้องใช้ Persistent Profile</div>
+          </div>
         </div>
         <div class="table-wrap">
           <table class="data-table">
             <thead>
               <tr>
                 <th># สำรอง</th>
-                <th>โดเมนเว็บไซต์</th>
-                <th>ประเภทคลังสำรอง</th>
-                <th>ตระกูลระบบ</th>
-                <th>แนวทางการใช้งาน</th>
+                <th>โดเมน</th>
+                <th>สถานะ</th>
+                <th>CMS Family</th>
+                <th>แนวทางใช้งาน</th>
               </tr>
             </thead>
             <tbody id="reserve-tbody"></tbody>
@@ -690,6 +984,8 @@ body {
       </div>
     </section>
   </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"><svg class="icon icon-l"><use href="#i-check"/></svg><span id="toast-text"></span></div>
 
   <script>
 
@@ -735,7 +1031,13 @@ function updateMetrics(data) {
   const totalRecords = Object.values(summary).reduce((a, b) => a + b, 0);
   const topKey = Object.keys(summary)[0] || "READY";
   document.getElementById("metric-db-ready").textContent = `${totalRecords || 100} ${topKey.replace("_100", "")}`;
+  const setCount = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = n; };
+  setCount("nav-count-sites", appState.sites.length);
+  setCount("nav-count-props", appState.properties.length);
+  setCount("nav-count-reserve", appState.reservePool.length);
 }
+
+const icon = (name, cls = "icon") => `<svg class="${cls}"><use href="#i-${name}"/></svg>`;
 
 function renderMasterSites() {
   const q = (document.getElementById("site-search-input").value || "").trim().toLowerCase();
@@ -755,20 +1057,27 @@ function renderMasterSites() {
     return true;
   });
 
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="8" class="empty-state">ไม่พบเว็บที่ตรงกับ "${q}" — ลองค้นด้วยชื่อโดเมนหรือเลือกกลุ่ม "ทั้งหมด"</td></tr>`;
+    return;
+  }
+
   tbody.innerHTML = filtered
     .map(
       (s) => `
     <tr>
-      <td class="mono"><strong>${s.slot}</strong></td>
-      <td class="mono"><span class="badge badge-online">ONLINE</span> <strong>${s.domain}</strong></td>
-      <td>${s.origin}</td>
+      <td class="mono cell-muted">${s.slot}</td>
+      <td><span class="cell-domain"><span class="badge badge-online" title="ONLINE"><span class="status-dot"></span>200</span>${s.domain}</span></td>
+      <td class="cell-muted">${s.origin}</td>
       <td><span class="badge badge-info">${s.cms_family}</span></td>
-      <td class="mono">${s.endpoints.login}</td>
+      <td class="mono cell-muted">${s.endpoints.login}</td>
       <td class="mono">${s.endpoints.post}</td>
-      <td class="mono">${s.endpoints.delete}</td>
+      <td class="mono cell-muted">${s.endpoints.delete}</td>
       <td>
-        <button class="btn btn-chip" onclick="triggerSiteAction(${s.slot}, 'DRY_RUN')">Dry-Run</button>
-        <button class="btn btn-chip" onclick="triggerSiteAction(${s.slot}, 'BUMP')">ดัน</button>
+        <div class="cell-actions">
+          <button class="btn btn-chip" onclick="triggerSiteAction(${s.slot}, 'DRY_RUN')" title="ทดสอบโพสต์เว็บ #${s.slot}">${icon("play")}ทดสอบ</button>
+          <button class="btn btn-chip" onclick="triggerSiteAction(${s.slot}, 'BUMP')" title="ดันประกาศเว็บ #${s.slot}">${icon("arrow-up")}ดัน</button>
+        </div>
       </td>
     </tr>
   `
@@ -784,15 +1093,13 @@ function renderProperties() {
     .map((p) => {
       const isAct = p.code === appState.selectedPropertyCode ? "active" : "";
       return `
-      <div class="prop-item ${isAct}" onclick="selectProperty('${p.code}')">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong class="mono">[${p.code}] ${p.listing_type}${p.property_type}</strong>
-          <span class="badge badge-online">${Number(p.price).toLocaleString()} ${p.price_unit}</span>
+      <div class="prop-item ${isAct}" onclick="selectProperty('${p.code}')" role="button" tabindex="0">
+        <div class="prop-head">
+          <span class="badge badge-info">${p.code} · ${p.listing_type}${p.property_type}</span>
+          <span class="prop-price">${Number(p.price).toLocaleString()} ${p.price_unit}</span>
         </div>
-        <div style="font-size:13px; margin-top:4px; color:var(--text-primary);">${p.title}</div>
-        <div style="font-size:12px; margin-top:4px; color:var(--text-muted);">
-          พื้นที่ ${p.area_sqw || "-"} ตร.ว. · ${p.bedrooms} นอน ${p.bathrooms} น้ำ · ${p.province}
-        </div>
+        <div class="prop-title">${p.title}</div>
+        <div class="prop-meta">${p.area_sqw || "-"} ตร.ว. · ${p.bedrooms} นอน ${p.bathrooms} น้ำ · ${p.province}</div>
       </div>
     `;
     })
@@ -800,20 +1107,20 @@ function renderProperties() {
 
   const current = appState.properties.find((p) => p.code === appState.selectedPropertyCode);
   if (!current) {
-    spinEl.innerHTML = `<div class="spin-box">ยังไม่มีรายการทรัพย์ที่เลือก</div>`;
+    spinEl.innerHTML = `<div class="spin-box empty-state">ยังไม่ได้เลือกทรัพย์ — กด "เพิ่มทรัพย์ใหม่" หรือเลือกจากรายการทางซ้าย</div>`;
     return;
   }
 
   document.getElementById("selected-prop-heading").textContent =
-    `คำโฆษณา SEO 5 สไตล์สำหรับ [${current.code}] ${current.listing_type}${current.property_type}`;
+    `คำโฆษณา 5 สไตล์ · ${current.code} ${current.listing_type}${current.property_type}`;
 
   spinEl.innerHTML = (current.variants || [])
     .map(
       (v, i) => `
     <div class="spin-box">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-        <span class="badge badge-info">สไตล์ที่ ${i + 1}: ${v.style_name}</span>
-        <span class="mono" style="color:var(--text-muted);">ความยาวหัวข้อ ${v.title.length} ตัวอักษร</span>
+      <div class="spin-head">
+        <span class="badge badge-info">${i + 1} · ${v.style_name}</span>
+        <span class="mono cell-muted">หัวข้อ ${v.title.length} ตัวอักษร</span>
       </div>
       <div class="spin-title">${v.title}</div>
       <div class="spin-body">${v.body_text}</div>
@@ -832,14 +1139,14 @@ function renderLifecycleRecords() {
       if (r.status.includes("DELETE")) badgeCls = "badge-danger";
       return `
       <tr>
-        <td class="mono">${r.site_id}</td>
+        <td class="mono cell-muted">${r.site_id}</td>
         <td class="mono"><strong>${r.listing_code}</strong></td>
-        <td class="mono">${r.domain}</td>
+        <td><span class="cell-domain">${r.domain}</span></td>
         <td><span class="badge ${badgeCls}">${r.status}</span></td>
         <td class="mono">${r.last_action}</td>
         <td class="mono"><a href="${r.published_url || '#'}" target="_blank" rel="noopener">${r.published_url || "-"}</a></td>
-        <td>${r.message || "-"}</td>
-        <td class="mono">${r.updated_at}</td>
+        <td class="cell-muted">${r.message || "-"}</td>
+        <td class="mono cell-muted">${r.updated_at}</td>
       </tr>
     `;
     })
@@ -852,11 +1159,11 @@ function renderReservePool() {
     .map(
       (r, idx) => `
     <tr>
-      <td class="mono">${101 + idx}</td>
-      <td class="mono"><strong>${r.domain}</strong></td>
+      <td class="mono cell-muted">${101 + idx}</td>
+      <td><span class="cell-domain">${r.domain}</span></td>
       <td><span class="badge ${r.status === 'ONLINE_RESERVE' ? 'badge-online' : 'badge-warn'}">${r.status}</span></td>
       <td><span class="badge badge-info">${r.cms_family}</span></td>
-      <td>${r.notes}</td>
+      <td class="cell-muted">${r.notes}</td>
     </tr>
   `
     )
@@ -908,7 +1215,40 @@ async function triggerBatchAction(action) {
   renderLifecycleRecords();
 }
 
+function showToast(text) {
+  const toast = document.getElementById("toast");
+  if (!toast || !text) return;
+  document.getElementById("toast-text").textContent = text;
+  toast.classList.add("show");
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => toast.classList.remove("show"), 2800);
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  try { localStorage.setItem("autopost-theme", theme); } catch (_e) {}
+}
+
+async function withLoading(btn, fn) {
+  btn.classList.add("is-loading");
+  btn.disabled = true;
+  try { await fn(); } finally { btn.classList.remove("is-loading"); btn.disabled = false; }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  // Theme (Light / Dark are token swaps)
+  let savedTheme = null;
+  try { savedTheme = localStorage.getItem("autopost-theme"); } catch (_e) {}
+  if (savedTheme) applyTheme(savedTheme);
+  document.getElementById("btn-theme-toggle").addEventListener("click", () => {
+    const cur = document.documentElement.getAttribute("data-theme");
+    applyTheme(cur === "dark" ? "light" : "dark");
+  });
+
+  // Toast feedback whenever an action reports status
+  const lastAction = document.getElementById("metric-last-action");
+  new MutationObserver(() => showToast(lastAction.textContent)).observe(lastAction, { childList: true, characterData: true, subtree: true });
+
   // Navigation tabs
   document.querySelectorAll(".nav-tab").forEach((tab) => {
     tab.addEventListener("click", () => {
@@ -932,7 +1272,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("site-search-input").addEventListener("input", renderMasterSites);
 
   document.getElementById("btn-toggle-new-prop").addEventListener("click", () => {
-    document.getElementById("new-prop-form-wrap").classList.toggle("hidden");
+    const wrap = document.getElementById("new-prop-form-wrap");
+    wrap.classList.toggle("hidden");
+    if (!wrap.classList.contains("hidden")) document.getElementById("inp-code").focus();
+  });
+  document.getElementById("btn-cancel-prop").addEventListener("click", () => {
+    document.getElementById("new-prop-form-wrap").classList.add("hidden");
   });
 
   document.getElementById("new-prop-form").addEventListener("submit", async (e) => {
@@ -953,15 +1298,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  document.getElementById("btn-run-dry-all").addEventListener("click", () => triggerBatchAction("DRY_RUN"));
-  document.getElementById("btn-dryrun-selected-prop").addEventListener("click", async () => {
+  const bind = (id, fn) => {
+    const btn = document.getElementById(id);
+    btn.addEventListener("click", () => withLoading(btn, fn));
+  };
+  bind("btn-run-dry-all", () => triggerBatchAction("DRY_RUN"));
+  bind("btn-dryrun-selected-prop", async () => {
     await triggerBatchAction("DRY_RUN");
     document.getElementById("tab-btn-lifecycle").click();
   });
-  document.getElementById("btn-run-bump-all").addEventListener("click", () => triggerBatchAction("BUMP"));
-  document.getElementById("btn-trigger-bump").addEventListener("click", () => triggerBatchAction("BUMP"));
-  document.getElementById("btn-trigger-delete").addEventListener("click", () => triggerBatchAction("DELETE"));
-  document.getElementById("btn-refresh-data").addEventListener("click", fetchOverview);
+  bind("btn-run-bump-all", () => triggerBatchAction("BUMP"));
+  bind("btn-trigger-bump", () => triggerBatchAction("BUMP"));
+  bind("btn-trigger-delete", async () => {
+    const code = appState.selectedPropertyCode || "ZSK052";
+    if (!confirm(`ลบประกาศทรัพย์ ${code} ออกจากทุกเว็บ?\nใช้เมื่อทรัพย์ขายแล้วเท่านั้น — ต้องโพสต์ใหม่หากลบผิด`)) return;
+    await triggerBatchAction("DELETE");
+  });
+  bind("btn-refresh-data", fetchOverview);
 
   fetchOverview();
 });
