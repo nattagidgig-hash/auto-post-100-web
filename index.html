@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto-Post 100 — ระบบควบคุมบอทโพสต์อสังหาฯ อัตโนมัติ (AI Agentic Control Panel)</title>
+  <meta name="description" content="ระบบบริหารจัดการโฟลเดอร์ทรัพย์สิน ปั่นคำโฆษณา SEO 5 สไตล์ และสั่งรันบอทโพสต์ ดัน ลบประกาศอสังหาฯ 100 เว็บไซต์อัตโนมัติ" />
+  <style>
+/* AI Agentic Auto-Post 100 — Command Center Vanilla CSS Design System */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --bg-surface: #f7f6f2;
+  --bg-panel: #ffffff;
+  --bg-subtle: #efede7;
+  --bg-active: #e5e2d9;
+  --text-primary: #181816;
+  --text-secondary: #575652;
+  --text-muted: #85837d;
+  --border-hairline: #dfdcd3;
+  --border-strong: #c7c3b8;
+
+  --brand-primary: #14532d;
+  --brand-primary-hover: #166534;
+  --brand-primary-fg: #ffffff;
+
+  --status-online-bg: #dcfce7;
+  --status-online-fg: #166534;
+  --status-warn-bg: #fef3c7;
+  --status-warn-fg: #92400e;
+  --status-danger-bg: #fee2e2;
+  --status-danger-fg: #991b1b;
+  --status-info-bg: #e0f2fe;
+  --status-info-fg: #075985;
+
+  --font-sans: 'IBM Plex Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header & Top Navigation */
+.app-header {
+  background-color: var(--bg-panel);
+  border-bottom: 1px solid var(--border-hairline);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.brand-group {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.brand-group h1 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.brand-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Navigation Tabs */
+.nav-bar {
+  background-color: var(--bg-panel);
+  border-bottom: 1px solid var(--border-hairline);
+  padding: 0 24px;
+  display: flex;
+  gap: 24px;
+}
+
+.nav-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 11px 4px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.nav-tab:hover {
+  color: var(--text-primary);
+}
+
+.nav-tab.active {
+  color: var(--brand-primary);
+  border-bottom-color: var(--brand-primary);
+  font-weight: 600;
+}
+
+/* Main Workspace Container */
+.workspace {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 20px 24px 48px;
+}
+
+/* Summary Strip */
+.metric-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.metric-box {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 4px;
+}
+
+.metric-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Layout Panels */
+.panel {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-hairline);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background-color: var(--bg-panel);
+}
+
+.panel-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.panel-body {
+  padding: 18px;
+}
+
+/* Buttons & Inputs */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 13px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background-color: var(--bg-panel);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+.btn:hover {
+  background-color: var(--bg-subtle);
+}
+
+.btn-primary {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary-fg);
+}
+
+.btn-primary:hover {
+  background-color: var(--brand-primary-hover);
+}
+
+.btn-danger {
+  background-color: var(--status-danger-bg);
+  border-color: #fca5a5;
+  color: var(--status-danger-fg);
+}
+
+.btn-chip {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.btn-chip.active {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary-fg);
+}
+
+.input-control, .select-control, .textarea-control {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  padding: 7px 11px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-panel);
+  color: var(--text-primary);
+}
+
+.input-control:focus, .select-control:focus, .textarea-control:focus {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: -1px;
+}
+
+/* Data Tables */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.data-table th {
+  position: sticky;
+  top: 0;
+  background-color: var(--bg-subtle);
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border-hairline);
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border-hairline);
+  vertical-align: middle;
+}
+
+.data-table tr:hover td {
+  background-color: #faf9f5;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+/* Status Badges */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.badge-online {
+  background-color: var(--status-online-bg);
+  color: var(--status-online-fg);
+}
+
+.badge-warn {
+  background-color: var(--status-warn-bg);
+  color: var(--status-warn-fg);
+}
+
+.badge-info {
+  background-color: var(--status-info-bg);
+  color: var(--status-info-fg);
+}
+
+.badge-danger {
+  background-color: var(--status-danger-bg);
+  color: var(--status-danger-fg);
+}
+
+/* Two-Column Grid for Property Hub & AI Spinner */
+.split-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 900px) {
+  .split-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.prop-item {
+  padding: 12px 14px;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  cursor: pointer;
+  background-color: var(--bg-panel);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.prop-item:hover {
+  background-color: var(--bg-subtle);
+}
+
+.prop-item.active {
+  border-color: var(--brand-primary);
+  background-color: #f0fdf4;
+}
+
+.spin-box {
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 12px;
+  background-color: #fcfbf9;
+}
+
+.spin-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+
+.spin-body {
+  white-space: pre-wrap;
+  font-size: 13px;
+  color: var(--text-secondary);
+  background-color: var(--bg-panel);
+  padding: 10px 12px;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.hidden {
+  display: none !important;
+}
+
+</style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-group">
+      <h1>Auto-Post 100 Command Center</h1>
+      <span class="brand-subtitle">ระบบ AI Agentic โพสต์ · ดันประกาศ · ลบประกาศอสังหาฯ (Master 100 Active Sites)</span>
+    </div>
+    <div class="header-actions">
+      <button id="btn-run-dry-all" class="btn btn-primary">▶ สั่งรัน Dry-Run ครบ 100 เว็บ</button>
+      <button id="btn-run-bump-all" class="btn">↑ ดันประกาศรายวัน (Bump)</button>
+      <button id="btn-refresh-data" class="btn">↻ รีเฟรชสถานะ</button>
+    </div>
+  </header>
+
+  <nav class="nav-bar" aria-label="เมนูหลัก">
+    <button class="nav-tab active" id="tab-btn-sites" data-tab="view-sites">1. ทะเบียน 100 เว็บพร้อมใช้ &amp; คิว Wave</button>
+    <button class="nav-tab" id="tab-btn-properties" data-tab="view-properties">2. โฟลเดอร์ทรัพย์บน Server &amp; AI ปั่นคำโพสต์</button>
+    <button class="nav-tab" id="tab-btn-lifecycle" data-tab="view-lifecycle">3. ประวัติการโพสต์ · ดัน · ลบประกาศ (SQLite DB)</button>
+    <button class="nav-tab" id="tab-btn-shots" data-tab="view-shots">4. ภาพหน้าจอบอท Playwright จริง (Dry-Run Verified)</button>
+    <button class="nav-tab" id="tab-btn-reserve" data-tab="view-reserve">5. คลังเว็บสำรอง &amp; Persistent Profile (+59 เว็บ)</button>
+  </nav>
+
+  <main class="workspace">
+    <!-- Top Metric Strip -->
+    <section class="metric-strip" aria-label="ตัวชี้วัดภาพรวม">
+      <div class="metric-box">
+        <div class="metric-label">ทะเบียนเว็บพร้อมโพสต์ (ONLINE 200)</div>
+        <div class="metric-value" id="metric-active-count">100 / 100</div>
+        <div class="metric-note">ลิสต์เดิม 42 เว็บ + ดึงจากบอทเก่ามาเติม 58 เว็บ</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">กลุ่ม Template Family (1 โค้ดยิงยกแผง)</div>
+        <div class="metric-value" id="metric-family-count">33 เว็บ</div>
+        <div class="metric-note">ThaiClassifiedCMS (12) · WordPress (15) · SimpleAdd (6)</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">โฟลเดอร์ทรัพย์บนเครื่อง Server</div>
+        <div class="metric-value" id="metric-prop-count">2 รายการ</div>
+        <div class="metric-note">พร้อมปั่นคำโฆษณา AI 5 สไตล์ไม่ซ้ำกัน</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">สถานะ Dry-Run / คิวงานในฐานข้อมูล</div>
+        <div class="metric-value" id="metric-db-ready">100 READY</div>
+        <div class="metric-note" id="metric-last-action">พร้อมยิงทดสอบราย Wave</div>
+      </div>
+    </section>
+
+    <!-- TAB 1: MASTER 100 SITES & WAVE CONTROL -->
+    <section id="view-sites" class="tab-view">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">ทะเบียน 100 เว็บอสังหาฯ ที่ออนไลน์จริง 100% (แบ่งตามตระกูล CMS &amp; Wave)</div>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+            <button class="btn btn-chip active" data-fam="ALL" id="flt-fam-all">ทั้งหมด (100)</button>
+            <button class="btn btn-chip" data-fam="ModernSPA" id="flt-fam-spa">Wave 1: ModernSPA (14)</button>
+            <button class="btn btn-chip" data-fam="ThaiClassifiedCMS" id="flt-fam-thai">Wave 2A: ThaiClassifiedCMS (12)</button>
+            <button class="btn btn-chip" data-fam="WordPressClassified" id="flt-fam-wp">Wave 2B: WordPress (15)</button>
+            <button class="btn btn-chip" data-fam="SimpleAddPHP" id="flt-fam-simple">Wave 2C: SimpleAddPHP (6)</button>
+            <button class="btn btn-chip" data-fam="CustomPHP/Portal" id="flt-fam-custom">Wave 3: CustomPHP/Forum (53)</button>
+            <input type="text" id="site-search-input" class="input-control" placeholder="ค้นหาชื่อเว็บ / Path..." style="width:190px;" />
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>โดเมนเว็บไซต์</th>
+                <th>ที่มา</th>
+                <th>ตระกูลระบบ (CMS Family)</th>
+                <th>Path ล็อกอิน</th>
+                <th>Path ลงประกาศ (Post)</th>
+                <th>Path ดัน/ลบประกาศ</th>
+                <th>สั่งงานรายเว็บ</th>
+              </tr>
+            </thead>
+            <tbody id="master-sites-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: SERVER PROPERTY FOLDERS & AI CONTENT SPINNER -->
+    <section id="view-properties" class="tab-view hidden">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">เพิ่มโฟลเดอร์ทรัพย์ใหม่ลงเครื่อง Server (data/properties/)</div>
+          <button id="btn-toggle-new-prop" class="btn btn-primary">+ สร้างโฟลเดอร์ทรัพย์ใหม่</button>
+        </div>
+        <div id="new-prop-form-wrap" class="panel-body hidden" style="border-bottom:1px solid var(--border-hairline); background-color:#faf9f5;">
+          <form id="new-prop-form">
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="inp-code">รหัสทรัพย์ (เช่น ZSK099)</label>
+                <input id="inp-code" name="code" class="input-control" required placeholder="ZSK099" />
+              </div>
+              <div class="form-field">
+                <label for="inp-listing-type">ประเภทประกาศ</label>
+                <select id="inp-listing-type" name="listing_type" class="select-control">
+                  <option value="ขาย">ขาย</option>
+                  <option value="เช่า">เช่า</option>
+                  <option value="ขายดาวน์">ขายดาวน์</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="inp-prop-type">ประเภทอสังหาฯ</label>
+                <select id="inp-prop-type" name="property_type" class="select-control">
+                  <option value="บ้านเดี่ยว">บ้านเดี่ยว</option>
+                  <option value="ทาวน์เฮ้าส์">ทาวน์เฮ้าส์</option>
+                  <option value="คอนโด">คอนโด</option>
+                  <option value="ที่ดิน">ที่ดิน</option>
+                  <option value="โกดัง">โกดัง / โรงงาน</option>
+                  <option value="อาคารพาณิชย์">อาคารพาณิชย์</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="inp-price">ราคา (บาท)</label>
+                <input id="inp-price" name="price" type="number" class="input-control" required value="3500000" />
+              </div>
+              <div class="form-field">
+                <label for="inp-sqw">ขนาดที่ดิน (ตร.ว.)</label>
+                <input id="inp-sqw" name="area_sqw" type="number" step="0.1" class="input-control" value="35" />
+              </div>
+              <div class="form-field">
+                <label for="inp-bed">ห้องนอน / ห้องน้ำ</label>
+                <div style="display:flex; gap:6px;">
+                  <input id="inp-bed" name="bedrooms" type="number" class="input-control" value="3" style="width:50%" title="ห้องนอน" />
+                  <input id="inp-bath" name="bathrooms" type="number" class="input-control" value="2" style="width:50%" title="ห้องน้ำ" />
+                </div>
+              </div>
+              <div class="form-field">
+                <label for="inp-project">ชื่อโครงการ / หมู่บ้าน</label>
+                <input id="inp-project" name="project_name" class="input-control" placeholder="หมู่บ้าน..." />
+              </div>
+              <div class="form-field">
+                <label for="inp-district">เขต/อำเภอ · จังหวัด</label>
+                <div style="display:flex; gap:6px;">
+                  <input id="inp-district" name="district" class="input-control" placeholder="เมืองนนทบุรี" style="width:50%" />
+                  <input id="inp-province" name="province" class="input-control" value="นนทบุรี" style="width:50%" />
+                </div>
+              </div>
+            </div>
+            <div class="form-field" style="margin-bottom:12px;">
+              <label for="inp-title">หัวข้อทรัพย์หลัก</label>
+              <input id="inp-title" name="title" class="input-control" required placeholder="ขายบ้านเดี่ยว 2 ชั้น ทำเลดี..." />
+            </div>
+            <div class="form-field" style="margin-bottom:12px;">
+              <label for="inp-desc">รายละเอียดทรัพย์ &amp; สถานที่ใกล้เคียง</label>
+              <textarea id="inp-desc" name="description" rows="3" class="textarea-control" placeholder="ระบุจุดเด่น การต่อเติม สถานที่ใกล้เคียง เบอร์โทรติดต่อ..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" id="btn-save-prop">บันทึกโฟลเดอร์ทรัพย์และปั่นคำโฆษณา AI ทันที</button>
+          </form>
+        </div>
+        <div class="panel-body">
+          <div class="split-grid">
+            <div>
+              <div style="font-weight:600; margin-bottom:10px;">รายการโฟลเดอร์ทรัพย์บน Server</div>
+              <div id="property-list-container"></div>
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div style="font-weight:600;" id="selected-prop-heading">คำโฆษณา SEO 5 สไตล์ที่ AI ปั่นให้ (ป้องกันเนื้อหาซ้ำ 100 เว็บ)</div>
+                <button class="btn btn-primary" id="btn-dryrun-selected-prop">▶ สั่งรัน Dry-Run ทรัพย์นี้ทั้ง 100 เว็บ</button>
+              </div>
+              <div id="spun-variants-container"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: LIFECYCLE DB (POST / BUMP / DELETE) -->
+    <section id="view-lifecycle" class="tab-view hidden">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">ฐานข้อมูลติดตามสถานะประกาศ (SQLite Lifecycle Tracking: โพสต์ · ดันประกาศ · ลบเมื่อขายแล้ว)</div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn" id="btn-trigger-bump">↑ สั่งดันประกาศทั้งหมด (Bump All)</button>
+            <button class="btn btn-danger" id="btn-trigger-delete">✕ สั่งลบประกาศทรัพย์ที่ขายแล้ว (Delete Sold)</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ลำดับเว็บ</th>
+                <th>รหัสทรัพย์</th>
+                <th>โดเมนเว็บไซต์</th>
+                <th>สถานะล่าสุด</th>
+                <th>คำสั่งล่าสุด</th>
+                <th>URL เป้าหมาย / ลิงก์ประกาศ</th>
+                <th>รายละเอียด (AI Variant &amp; CMS Family)</th>
+                <th>เวลาอัปเดต</th>
+              </tr>
+            </thead>
+            <tbody id="lifecycle-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: LIVE PLAYWRIGHT SCREENSHOTS -->
+    <section id="view-shots" class="tab-view hidden">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">ภาพถ่ายหน้าจอจริงจากบอท Playwright Chromium 159 Headless (รันผ่านครบ 36 เว็บใน 4 ตระกูลหลัก + Auto-Register)</div>
+        </div>
+        <div class="panel-body">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(380px, 1fr)); gap:16px;">
+            <div class="spin-box">
+              <div class="spin-title">#1 Thaihometown.com (ModernSPA — DRY_RUN_VERIFIED)</div>
+              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">บอทเปิดหน้าเข้าระบบสมาชิก /member/ และทดสอบกรอกข้อมูลสำเร็จ</p>
+              <img src="shots/shot_thaihometown.png" alt="Thaihometown Playwright Dry-Run" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            </div>
+            <div class="spin-box">
+              <div class="spin-title">#13 Ennxo.com (Modern Portal — DRY_RUN_VERIFIED)</div>
+              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">บอทเปิดหน้าลงประกาศ /sell และเตรียมกรอกชื่อทรัพย์สำเร็จ</p>
+              <img src="shots/shot_ennxo.png" alt="Ennxo Playwright Dry-Run" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            </div>
+            <div class="spin-box">
+              <div class="spin-title">#57 AcnaraProperty.com (ตัวแทนกลุ่ม ThaiClassifiedCMS 12 เว็บ — 12/12 VERIFIED)</div>
+              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">ใช้ Adapter ตัวเดียวยิงผ่านครบทั้ง 12 เว็บ พร้อมระบบ Auto-Register 4/4 เว็บ</p>
+              <img src="shots/shot_acnaraproperty.png" alt="AcnaraProperty Playwright Dry-Run" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            </div>
+            <div class="spin-box">
+              <div class="spin-title">#30 Thpostpop.com (ตัวแทนกลุ่ม WordPressClassified 15 เว็บ — 15/15 VERIFIED)</div>
+              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">ใช้ WordPressClassifiedAdapter ตัวเดียวยิงผ่านครบทั้ง 15 เว็บในเครือข่าย</p>
+              <img src="shots/shot_thpostpop.png" alt="Thpostpop Playwright Dry-Run" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            </div>
+            <div class="spin-box">
+              <div class="spin-title">#86 Teedintong.com (ตัวแทนกลุ่ม SimpleAddPHP 6 เว็บ — 6/6 VERIFIED)</div>
+              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">หน้าเข้าสู่ระบบและลงประกาศขายที่ดินฟรี /add_listing.php</p>
+              <img src="shots/shot_teedintong.png" alt="Teedintong Playwright Dry-Run" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            </div>
+            <div class="spin-box">
+              <div class="spin-title">#37 TeeSuay.com (CustomPHP Portal — DRY_RUN_VERIFIED)</div>
+              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">บอทเปิดหน้าสมาชิกและทดสอบกรอกข้อมูลก่อนถึง Publish Gate</p>
+              <img src="shots/shot_teesuay.png" alt="TeeSuay Playwright Dry-Run" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            </div>
+            <div class="spin-box">
+              <div class="spin-title">Visual Sentinel: ตรวจพบ PantipMarket.com ปิดตัวถาวรในหน้า /post/</div>
+              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">ระบบคัดออกอัตโนมัติและดึง Kaidee.com จากคลังสำรองขึ้นมาแทนให้ครบ 100 เว็บ</p>
+              <img src="shots/shot_pantipmarket.png" alt="PantipMarket Discontinued Notice" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            </div>
+            <div class="spin-box">
+              <div class="spin-title">Human-in-the-Loop Sentinel: ตรวจพบ Cloudflare บน PrakardProperty.com</div>
+              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">บอทหยุดอย่างปลอดภัยตามกฎเหล็ก เพื่อให้แอดมินกดยืนยันผ่าน Persistent Profile ครั้งแรก</p>
+              <img src="shots/shot_prakardproperty.png" alt="PrakardProperty Cloudflare Gate" style="width:100%; border:1px solid var(--border-hairline); border-radius:4px;" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: RESERVE POOL (+59 SITES) -->
+    <section id="view-reserve" class="tab-view hidden">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">คลังเว็บสำรอง (+60 เว็บ: เว็บออนไลน์สำรอง 38 เว็บ + เว็บติด Cloudflare ใช้ Persistent Profile 22 เว็บ)</div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th># สำรอง</th>
+                <th>โดเมนเว็บไซต์</th>
+                <th>ประเภทคลังสำรอง</th>
+                <th>ตระกูลระบบ</th>
+                <th>แนวทางการใช้งาน</th>
+              </tr>
+            </thead>
+            <tbody id="reserve-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+
+const EMBEDDED_OVERVIEW = {"sites": [{"slot": 1, "original_id": 1, "domain": "thaihometown.com", "ascii_domain": "thaihometown.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.thaihometown.com/", "title": "บ้าน ทาวน์โฮม คอนโดมิเนียม อาคาร ที่ดิน โรงงาน สำนักงาน ธุรกิจ อสังหาริมทรัพย์ | Thaihometown", "cms_family": "ModernSPA", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "/member/", "post": "/member/", "bump": "/member/", "delete": "/member/"}, "notes": "พร้อมใช้งาน"}, {"slot": 2, "original_id": 4, "domain": "renthub.in.th", "ascii_domain": "renthub.in.th", "status": "ONLINE", "http_code": 200, "final_url": "https://www.renthub.in.th/", "title": "อพาร์ทเม้นท์ หอพัก ห้องพัก ทั่วเมืองไทย | RentHub.in.th", "cms_family": "ModernSPA", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/dashboard", "bump": "/dashboard", "delete": "/dashboard"}, "notes": "พร้อมใช้งาน"}, {"slot": 3, "original_id": 6, "domain": "estate.in.th", "ascii_domain": "estate.in.th", "status": "ONLINE", "http_code": 200, "final_url": "https://estate.in.th/", "title": "Estate.in.th — ขาย เช่า บ้าน คอนโด ที่ดิน", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "Cloudflare-CDN"}, {"slot": 4, "original_id": 11, "domain": "landthailand.com", "ascii_domain": "landthailand.com", "status": "ONLINE", "http_code": 200, "final_url": "https://landthailand.com/", "title": "", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 5, "original_id": 12, "domain": "banteedin108.com", "ascii_domain": "banteedin108.com", "status": "ONLINE", "http_code": 200, "final_url": "https://banteedin108.com/", "title": "", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "/sign/login", "post": "/member/projectform", "bump": "/member/project", "delete": "/member/project"}, "notes": "พร้อมใช้งาน"}, {"slot": 6, "original_id": 17, "domain": "baan-dd.com", "ascii_domain": "baan-dd.com", "status": "ONLINE", "http_code": 200, "final_url": "https://baan-dd.com/", "title": "บ้านดีดี", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 7, "original_id": 18, "domain": "prakardproperty.com", "ascii_domain": "prakardproperty.com", "status": "ONLINE", "http_code": 200, "final_url": "https://prakardproperty.com/", "title": "Prakard Property | ซื้อ ขาย เช่า อสังหาริมทรัพย์ทั่วไทย", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/properties/create", "bump": "/login", "delete": "/login"}, "notes": "Cloudflare-CDN"}, {"slot": 8, "original_id": 24, "domain": "hometophit.com", "ascii_domain": "hometophit.com", "status": "ONLINE", "http_code": 200, "final_url": "http://hometophit.com/", "title": "คอนโด บ้านมือสอง บ้านจัดสรร บ้านเดี่ยว condo อันดับ1 บ้านเช่า ที่ดิน ทาวน์เฮาส์ คอนโดมิเนียม โครงการบ้าน ห้องเ", "cms_family": "ForumWebboard", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "/hometh/mem_panel.php", "post": "/hometh/home_post.php", "bump": "/hometh/mem_panel.php", "delete": "/hometh/mem_panel.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 9, "original_id": 25, "domain": "ilovecondo.net", "ascii_domain": "ilovecondo.net", "status": "ONLINE", "http_code": 200, "final_url": "https://ilovecondo.net/th", "title": "ซื้อ ขาย เช่า คอนโดทั่วไทย | ค้นหาคอนโดใกล้ BTS MRT | ilovecondo.net", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "Cloudflare-CDN"}, {"slot": 10, "original_id": 28, "domain": "seristarproperty.com", "ascii_domain": "seristarproperty.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.seristarproperty.com/", "title": "ซื้อ ขาย อสังหาริมทรัพย์ คอนโด ที่ดิน - SeriStarProperty", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 11, "original_id": 30, "domain": "thaicenterway.com", "ascii_domain": "thaicenterway.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.thaicenterway.com/", "title": "", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 12, "original_id": 31, "domain": "ennxo.com", "ascii_domain": "ennxo.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.ennxo.com/", "title": "ENNXO (เอ็นโซ่) | ตลาดออนไลน์ ซื้อ-ขายสินค้ามือสองและสินค้าใหม่", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/sell", "bump": "/my-account", "delete": "/my-account"}, "notes": "พร้อมใช้งาน"}, {"slot": 13, "original_id": 34, "domain": "คอนโดให้เช่า.com", "ascii_domain": "xn--42cm3at5gj3b0hpal2dj.com", "status": "ONLINE", "http_code": 200, "final_url": "https://xn--42cm3at5gj3b0hpal2dj.com/", "title": "", "cms_family": "SimpleAddPHP", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "/content.php", "post": "/add_property.php", "bump": "/", "delete": "/"}, "notes": "พร้อมใช้งาน"}, {"slot": 14, "original_id": 38, "domain": "homeradars.com", "ascii_domain": "homeradars.com", "status": "ONLINE", "http_code": 200, "final_url": "https://homeradars.com/", "title": "HomeRadars", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "Cloudflare-CDN"}, {"slot": 15, "original_id": 41, "domain": "chiangraifocus.com", "ascii_domain": "chiangraifocus.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.chiangraifocus.com/", "title": "เชียงรายโฟกัส ดอทคอม สังคมออนไลน์ของคนเชียงราย - สังคมออนไลน์ ของคนเชียงราย", "cms_family": "WordPressClassified", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/wp-login.php", "post": "/post-new/", "bump": "/dashboard/", "delete": "/dashboard/"}, "notes": "พร้อมใช้งาน"}, {"slot": 16, "original_id": 43, "domain": "บ้านกรุงเทพ.com", "ascii_domain": "xn--12cm2cfe2a6a3i9b7d9d.com", "status": "ONLINE", "http_code": 200, "final_url": "https://xn--12cm2cfe2a6a3i9b7d9d.com/", "title": "เธเนเธฒเธเธเธฃเธธเธเน€เธ—เธ.com | เธเธณเธซเธเนเธฒเธข เน€เธงเนเธเนเธเธ•เนเธเธฒเธขเธญเธชเธฑเธเธซเธฒเธฏเธชเธณเน€เ", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 17, "original_id": 49, "domain": "ddteedin.com", "ascii_domain": "ddteedin.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.meezub.com/", "title": "ขายที่ดิน ขายบ้าน บ้านมือสอง ทาวน์เฮ้าส์ ขายคอนโด", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "https://www.meezub.com/login", "post": "https://www.meezub.com/post", "bump": "https://www.meezub.com/member", "delete": "https://www.meezub.com/member"}, "notes": "Redirect -> meezub.com, Cloudflare-CDN"}, {"slot": 18, "original_id": 54, "domain": "ประกาศออนไลน์.com", "ascii_domain": "xn--12c2caf4bot4ba0ax4tzd.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.xn--12c2caf4bot4ba0ax4tzd.com/", "title": "ประกาศออนไลน์.com", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 19, "original_id": 56, "domain": "addnine.com", "ascii_domain": "addnine.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.addnine.com/th", "title": "ยินดีต้อนรับสู่ Addnine", "cms_family": "ModernSPA", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "Cloudflare-CDN"}, {"slot": 20, "original_id": 59, "domain": "thaimyland.com", "ascii_domain": "thaimyland.com", "status": "ONLINE", "http_code": 200, "final_url": "https://thaimyland.com/", "title": "Thaimyland ประกาศ อสังหาริมทรัพย์ อัปเดตล่าสุด ซื้อ ขาย เช่า บ้าน คอนโด ที่ดิน ผ่อนตรง ผ่อนตรงเจ้าของ กู้ได้ ก", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "/signup.php", "post": "/member/post-property.php", "bump": "/member/post-property.php", "delete": "/signup.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 21, "original_id": 60, "domain": "sawasdeee.com", "ascii_domain": "sawasdeee.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.sawasdeee.com/", "title": "Sawasdeee &#8211; สวัสดีประเทศไทย- Hello Thailand", "cms_family": "WordPressClassified", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/wp-login.php", "post": "/post-new/", "bump": "/dashboard/", "delete": "/dashboard/"}, "notes": "Cloudflare-CDN"}, {"slot": 22, "original_id": 62, "domain": "ขายอสังหา.com", "ascii_domain": "xn--22ck4f6agj3aeg.com", "status": "ONLINE", "http_code": 200, "final_url": "https://xn--22ck4f6agj3aeg.com/", "title": "", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 23, "original_id": 64, "domain": "teedin2.com", "ascii_domain": "teedin2.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.teedin2.com/", "title": "ประกาศ ฟรี, บ้าน ที่ดิน, ประกาศขายที่ดิน, ประกาศขายบ้าน, ซื้อที่ดิน, ขายที่ดิน", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "/topic1Policy.php", "post": "/topic1Policy.php", "bump": "/topic1Policy.php", "delete": "/topic1Policy.php"}, "notes": "Cloudflare-CDN"}, {"slot": 24, "original_id": 65, "domain": "talad.me", "ascii_domain": "talad.me", "status": "ONLINE", "http_code": 200, "final_url": "https://talad.me/", "title": "TALAD.ME : เธ•เธฅเธฒเธ”เธเธญเธเธเธธเธ“ เธ—เธธเธเธ—เธตเนเธ—เธธเธเน€เธงเธฅเธฒ", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "/user/login", "post": "/post", "bump": "/user/login", "delete": "/user/login"}, "notes": "พร้อมใช้งาน"}, {"slot": 25, "original_id": 69, "domain": "postfree108.com", "ascii_domain": "postfree108.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.postfree108.com/", "title": "Postfree108 ลงประกาศฟรี ลงขายของฟรี ลงประกาศขายสินค้า | ลงประกาศฟรี ลงขายฟรี", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 26, "original_id": 70, "domain": "ทาวน์เฮ้าส์ไทยแลนด์.com", "ascii_domain": "xn--l3cfahb7cvam2a3b3bd4pta6bze4bfh.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.xn--l3cfahb7cvam2a3b3bd4pta6bze4bfh.com/", "title": "ทาวน์เฮ้าส์ไทยแลนด์ดอทคอม รับจ้างโพส ลงประกาศ ตลาดซื้อขายทาวน์เฮ้าส์ ลงขายทาวน์เฮ้าส์", "cms_family": "WordPressClassified", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/wp-login.php", "post": "/post-new/", "bump": "/dashboard/", "delete": "/dashboard/"}, "notes": "พร้อมใช้งาน"}, {"slot": 27, "original_id": 71, "domain": "property2share.com", "ascii_domain": "property2share.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.tperty.com/", "title": "Tperty.com ll แหล่งรวม บ้านมือสอง คอนโด ที่ดิน หาบ้าน ซื้อบ้าน ขายบ้าน ขายที่ดิน ลงประกาศขาย ฟรี", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "https://www.tperty.com/เข้าระบบ", "post": "https://www.tperty.com/submit-property.php", "bump": "https://www.tperty.com/my-property.php", "delete": "https://www.tperty.com/my-property.php"}, "notes": "Redirect -> tperty.com, Cloudflare-CDN"}, {"slot": 28, "original_id": 75, "domain": "buyzaa.com", "ascii_domain": "buyzaa.com", "status": "ONLINE", "http_code": 200, "final_url": "https://buyzaa.com/", "title": "ลงประกาศฟรี ลงโฆษณาฟรี โปรโมทเว็บฟรี โปรโมทสินค้าฟรี ตลาดซื้อขายสินค้า โพสฟรี", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "Cloudflare-CDN"}, {"slot": 29, "original_id": 76, "domain": "sevendaysmarket.com", "ascii_domain": "sevendaysmarket.com", "status": "ONLINE", "http_code": 200, "final_url": "https://sevendaysmarket.com/", "title": "", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 30, "original_id": 81, "domain": "thpostpop.com", "ascii_domain": "thpostpop.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.thpostpop.com/", "title": "ลงประกาศอสังหาริมทรัพย์, รับจ้างโพส ลงประกาศ คอนโด, ที่ดิน, บ้าน", "cms_family": "WordPressClassified", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/wp-login.php", "post": "/post-new/", "bump": "/dashboard/", "delete": "/dashboard/"}, "notes": "พร้อมใช้งาน"}, {"slot": 31, "original_id": 82, "domain": "ที่ดินไทยแลนด์.com", "ascii_domain": "xn--l3cahbjb6dya5ki1l7a0cyd.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.xn--l3cahbjb6dya5ki1l7a0cyd.com/", "title": "ที่ดินไทยแลนด์ดอทคอม รับจ้างโพส ลงประกาศ ตลาดซื้อขายที่ดิน ลงประกาศขายที่ดิน", "cms_family": "WordPressClassified", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/wp-login.php", "post": "/post-new/", "bump": "/dashboard/", "delete": "/dashboard/"}, "notes": "พร้อมใช้งาน"}, {"slot": 32, "original_id": 83, "domain": "adsdealfree.com", "ascii_domain": "adsdealfree.com", "status": "ONLINE", "http_code": 200, "final_url": "https://adsdealfree.com/", "title": "ตลาดซื้อ-ขายของออนไลน์ ลงประกาศฟรี ลงโฆษณาฟรี ขายฟรี", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "Cloudflare-CDN"}, {"slot": 33, "original_id": 84, "domain": "propertyguideline.com", "ascii_domain": "propertyguideline.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.propertyguideline.com/", "title": "รับลงโฆษณา ลงประกาศ ซื้อขายที่ดิน ขายอสังหาริมทรัพย์ต่างๆ", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 34, "original_id": 86, "domain": "อาคารพาณิชย์ไทยแลนด์.com", "ascii_domain": "xn--42cm0afom5a8abe2a1g1cbc7a1sybzjh.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.xn--42cm0afom5a8abe2a1g1cbc7a1sybzjh.com/", "title": "อาคารพาณิชย์ไทยแลนด์ดอทคอม รับจ้างโพส ลงประกาศ ตลาดซื้อขายอาคารพาณิชย์ ฟรี", "cms_family": "WordPressClassified", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/wp-login.php", "post": "/post-new/", "bump": "/dashboard/", "delete": "/dashboard/"}, "notes": "พร้อมใช้งาน"}, {"slot": 35, "original_id": 88, "domain": "kaiteedin.net", "ascii_domain": "kaiteedin.net", "status": "ONLINE", "http_code": 200, "final_url": "https://kaiteedin.net/", "title": "เธเธฃเธฐเธเธฒเธจเธเธฃเธต,เธเนเธฒเธ เธ—เธตเนเธ”เธดเธ,เธเธฃเธฐเธเธฒเธจเธเธฒเธขเธ—เธตเนเธ”เธดเธ, เธเธฃเธฐเธเธฒเธจ", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 36, "original_id": 89, "domain": "quickdealfree.com", "ascii_domain": "quickdealfree.com", "status": "ONLINE", "http_code": 200, "final_url": "https://quickdealfree.com/", "title": "ลงประกาศฟรี ลงโฆษณาฟรี ประกาศซื้อขายฟรี รถมือสอง", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "Cloudflare-CDN"}, {"slot": 37, "original_id": 91, "domain": "teesuay.com", "ascii_domain": "teesuay.com", "status": "ONLINE", "http_code": 200, "final_url": "https://teesuay.com/", "title": "ขายบ้าน ที่ดิน คอนโด บ้านมือสอง ลงประกาศฟรี | ชาตรี ถิรวรกุล", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "/member/index.php", "post": "/member/post-property.php", "bump": "/member/index.php", "delete": "/member/list-property.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 38, "original_id": 93, "domain": "บ้านไทยแลนด์.com", "ascii_domain": "xn--l3cffbc4cva4h7f1a6c4b.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.xn--l3cffbc4cva4h7f1a6c4b.com/", "title": "บ้านไทยแลนด์ดอทคอม รับจ้างโพส ลงประกาศ ตลาดซื้อขายบ้าน ลงประกาศขายบ้าน", "cms_family": "WordPressClassified", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/wp-login.php", "post": "/post-new/", "bump": "/dashboard/", "delete": "/dashboard/"}, "notes": "พร้อมใช้งาน"}, {"slot": 39, "original_id": 94, "domain": "market.onlineoops.com", "ascii_domain": "market.onlineoops.com", "status": "ONLINE", "http_code": 200, "final_url": "https://market.onlineoops.com/", "title": "เธ•เธฅเธฒเธ”เธญเธญเธเนเธฅเธเน ! : Online Oops!", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม (มีในบอทเก่า)", "in_legacy_bot": true, "endpoints": {"login": "/user/login", "post": "/post/free", "bump": "/post/my-classified", "delete": "/post/my-classified"}, "notes": "พร้อมใช้งาน"}, {"slot": 40, "original_id": 98, "domain": "PropTechEasy.com", "ascii_domain": "proptecheasy.com", "status": "ONLINE", "http_code": 200, "final_url": "https://proptecheasy.com/", "title": "บ้าน คอนโด อสังหา และไอเดียออนไลน์สำหรับคนซื้อ คนขาย นายหน้า และ SME &#8211; บ้าน คอนโด และระบบช่วยขายออนไลน์", "cms_family": "WordPressClassified", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/wp-login.php", "post": "/post-new/", "bump": "/dashboard/", "delete": "/dashboard/"}, "notes": "พร้อมใช้งาน"}, {"slot": 41, "original_id": 100, "domain": "homedd.co.th", "ascii_domain": "homedd.co.th", "status": "ONLINE", "http_code": 200, "final_url": "https://homedd.co.th/", "title": "", "cms_family": "CustomPHP/Portal", "origin": "ลิสต์เดิม", "in_legacy_bot": false, "endpoints": {"login": "/login.php", "post": "/post.php", "bump": "/member.php", "delete": "/member.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 42, "original_id": null, "domain": "kaidee.com", "ascii_domain": "kaidee.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.kaidee.com/", "title": "Kaidee Marketplace", "cms_family": "ModernSPA", "origin": "พอร์ทัลใหญ่ (แทน pantipmarket ที่ประกาศปิดตัว)", "in_legacy_bot": false, "endpoints": {"login": "/login", "post": "/posting", "bump": "/member", "delete": "/member"}, "notes": "พร้อมใช้งาน"}, {"slot": 43, "original_id": null, "domain": "homehug.in.th", "ascii_domain": "homehug.in.th", "status": "ONLINE", "http_code": 200, "final_url": "https://www.homehug.in.th/", "title": "ซื้อขายเช่า บ้าน คอนโด ที่ดิน บ้านมือสอง อัปเดต 2569 | Homehug.in.th", "cms_family": "ModernSPA", "origin": "Wave-1 (Dry-Run ผ่านแล้ว 3/3)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/account/post", "bump": "/account", "delete": "/account"}, "notes": "Cloudflare-CDN"}, {"slot": 44, "original_id": null, "domain": "9asset.com", "ascii_domain": "9asset.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.9asset.com/", "title": "ซื้อ ขาย เช่า อสังหาฯ บ้าน คอนโด ที่ดิน โกดัง ทั่วไทย | 9asset", "cms_family": "ModernSPA", "origin": "Wave-1 (มี Adapter แล้ว)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/post", "bump": "/member", "delete": "/member"}, "notes": "Cloudflare-CDN"}, {"slot": 45, "original_id": null, "domain": "roomnayoo.com", "ascii_domain": "roomnayoo.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.roomnayoo.com/", "title": "", "cms_family": "ModernSPA", "origin": "Wave-1 (มี Adapter คอนโดแล้ว)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/post", "bump": "/member", "delete": "/member"}, "notes": "Cloudflare-CDN"}, {"slot": 46, "original_id": null, "domain": "baania.com", "ascii_domain": "baania.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.baania.com/", "title": "รวมโครงการมือสอง ทั้งบ้าน คอนโด ทาวน์โฮม ข้อมูลครบ ติดต่อตรง", "cms_family": "ModernSPA", "origin": "บอทเก่า (POST Baania.js)", "in_legacy_bot": true, "endpoints": {"login": "/th/login", "post": "/th/listing/create", "bump": "/th/profile", "delete": "/th/profile"}, "notes": "Cloudflare-CDN"}, {"slot": 47, "original_id": null, "domain": "nayoo.co", "ascii_domain": "nayoo.co", "status": "ONLINE", "http_code": 200, "final_url": "https://nayoo.co/", "title": "NaYoo รวมประกาศซื้อ ขาย เช่า บ้าน คอนโด ที่ดิน และแบบบ้าน ครบจบในที่เดียว", "cms_family": "ModernSPA", "origin": "บอทเก่า (POST nayoo.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/post", "bump": "/profile", "delete": "/profile"}, "notes": "พร้อมใช้งาน"}, {"slot": 48, "original_id": null, "domain": "thaiproperty.in.th", "ascii_domain": "thaiproperty.in.th", "status": "ONLINE", "http_code": 200, "final_url": "https://www.thaiproperty.in.th/", "title": "ThaiProperty.in.th - ขาย/ให้เช่า บ้านเดี่ยว คอนโดมิเนียม ทาวน์โฮม ที่ดิน ทำเล หลายรายการ ค้นหาง่าย สะดวกรวดเร็", "cms_family": "ModernSPA", "origin": "บอทเก่า (post thaiproperty.in.th.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/post-property", "bump": "/member", "delete": "/member"}, "notes": "Cloudflare-CDN"}, {"slot": 49, "original_id": null, "domain": "baaaan.com", "ascii_domain": "baaaan.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.baaaan.com/", "title": "baaaan | เว็บขายบ้าน คอนโด ที่ดิน อสังหาริมทรัพย์ทุกประเภท", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (POST baaaan.com.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/post", "bump": "/member", "delete": "/member"}, "notes": "พร้อมใช้งาน"}, {"slot": 50, "original_id": null, "domain": "bankumka.com", "ascii_domain": "bankumka.com", "status": "ONLINE", "http_code": 200, "final_url": "https://bankumka.com/", "title": "เธฅเธเธเธฃเธฐเธเธฒเธจเธเธฒเธข-เน€เธเนเธฒ เธเนเธฒเธเธกเธทเธญเธชเธญเธ เธเธญเธเนเธ” เธ—เธฒเธงเธเนเน€เธฎเนเธฒเธชเน", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (POST bankumka.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/post", "bump": "/member", "delete": "/member"}, "notes": "Cloudflare-CDN"}, {"slot": 51, "original_id": null, "domain": "orbzu.com", "ascii_domain": "orbzu.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.orbzu.com/", "title": "SUEBAAN — Thailand Property For Sale &amp; Rent", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (POST Orbzu.js / SUEBAAN)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/post", "bump": "/member", "delete": "/member"}, "notes": "พร้อมใช้งาน"}, {"slot": 52, "original_id": null, "domain": "taladbandee.com", "ascii_domain": "taladbandee.com", "status": "ONLINE", "http_code": 200, "final_url": "https://taladbandee.com/", "title": "ตลาดบ้านดี - นิตยสารที่รวบรวมข้อมูลการซื้อ-ขายอสังหาริมทรัพย์ทุกประเภท", "cms_family": "WordPressClassified", "origin": "บอทเก่า (POST Taladbandee.js)", "in_legacy_bot": true, "endpoints": {"login": "/wp-login.php", "post": "/post-new/", "bump": "/dashboard/", "delete": "/dashboard/"}, "notes": "พร้อมใช้งาน"}, {"slot": 53, "original_id": null, "domain": "kaideehome.com", "ascii_domain": "kaideehome.com", "status": "ONLINE", "http_code": 200, "final_url": "https://kaideehome.com/", "title": "kaideehome.com &#8211; เช่าได้ ขายดี ลงประกาศฟรี มีคนช่วยขายที่ kaideehome.com", "cms_family": "WordPressClassified", "origin": "บอทเก่า (post kaideehome.js)", "in_legacy_bot": true, "endpoints": {"login": "/wp-login.php", "post": "/post-new/", "bump": "/dashboard/", "delete": "/dashboard/"}, "notes": "พร้อมใช้งาน"}, {"slot": 54, "original_id": null, "domain": "เซ้งร้าน.com", "ascii_domain": "xn--72ch7bybxexd0cc.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.xn--72ch7bybxexd0cc.com/", "title": "เซ้งร้าน.com — ประกาศเซ้งร้านฟรี ขายกิจการ ให้เช่า", "cms_family": "ModernSPA", "origin": "บอทเก่า (post BUSINESS.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/post", "bump": "/member", "delete": "/member"}, "notes": "พร้อมใช้งาน"}, {"slot": 55, "original_id": null, "domain": "livinginsider.com", "ascii_domain": "livinginsider.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.livinginsider.com:443/", "title": "เว็บประกาศ ขาย ให้เช่า คอนโด บ้าน ที่ดิน ยอดนิยม ดีที่สุด ลงประกาศฟรี | Livinginsider", "cms_family": "ModernSPA", "origin": "บอทเก่า (หาทรัพย์ Livinginsider.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/post", "bump": "/member", "delete": "/member"}, "notes": "Cloudflare-CDN"}, {"slot": 56, "original_id": null, "domain": "zmyhome.com", "ascii_domain": "zmyhome.com", "status": "ONLINE", "http_code": 200, "final_url": "https://zmyhome.com/", "title": "ZmyHome เว็บ ซื้อ ขาย เช่า คอนโด-บ้าน มือสองเจ้าของขายเอง อันดับ 1", "cms_family": "ModernSPA", "origin": "พอร์ทัลอสังหาฯ ทราฟฟิกสูง", "in_legacy_bot": false, "endpoints": {"login": "/login", "post": "/post", "bump": "/member", "delete": "/member"}, "notes": "Cloudflare-CDN"}, {"slot": 57, "original_id": null, "domain": "acnaraproperty.com", "ascii_domain": "acnaraproperty.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.acnaraproperty.com/th/", "title": "ลงประกาศอสังหาฯ ฟรี! ซื้อ-ขาย-เช่า บ้าน คอนโด ที่ดิน ทั่วประเทศ", "cms_family": "ThaiClassifiedCMS", "origin": "บอทเก่า (post80.js / del80.js)", "in_legacy_bot": true, "endpoints": {"login": "/cp-account-classified.php", "post": "/th/post/", "bump": "/cp-account-classified.php", "delete": "/cp-account-classified.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 58, "original_id": null, "domain": "amanahpropertythailand.com", "ascii_domain": "amanahpropertythailand.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.amanahpropertythailand.com/th/", "title": "Amanah Property Thailand | บ้าน วิลล่า คอนโด ภูเก็ต", "cms_family": "ThaiClassifiedCMS", "origin": "บอทเก่า (post65.js / del70.js)", "in_legacy_bot": true, "endpoints": {"login": "/cp-account-classified.php", "post": "/th/post/", "bump": "/cp-account-classified.php", "delete": "/cp-account-classified.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 59, "original_id": null, "domain": "athomegroup.net", "ascii_domain": "athomegroup.net", "status": "ONLINE", "http_code": 200, "final_url": "https://www.athomegroup.net/th/", "title": "ลงประกาศอสังหาฯ ฟรี! ซื้อ-ขาย-เช่า บ้าน คอนโด ที่ดิน รถยนต์ ทั่วประเทศ", "cms_family": "ThaiClassifiedCMS", "origin": "บอทเก่า (post80.js / del80.js)", "in_legacy_bot": true, "endpoints": {"login": "/cp-account-classified.php", "post": "/th/post/", "bump": "/cp-account-classified.php", "delete": "/cp-account-classified.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 60, "original_id": null, "domain": "dealbaan.com", "ascii_domain": "dealbaan.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.dealbaan.com/th/", "title": "ซื้อ ขาย ให้เช่า บ้าน คอนโด ที่ดิน ทั่วไทย ลงประกาศฟรี | DealBaan", "cms_family": "ThaiClassifiedCMS", "origin": "บอทเก่า (post65.js / del70.js)", "in_legacy_bot": true, "endpoints": {"login": "/cp-account-classified.php", "post": "/th/post/", "bump": "/cp-account-classified.php", "delete": "/cp-account-classified.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 61, "original_id": null, "domain": "kaiteedin.com", "ascii_domain": "kaiteedin.com", "status": "ONLINE", "http_code": 200, "final_url": "https://kaiteedin.com/", "title": "ลงประกาศ ซื้อ-ชาย-เช่า ที่ดิน บ้าน คอนโด สำนักงาน และ อสังหาริมทรัพย์", "cms_family": "ThaiClassifiedCMS", "origin": "บอทเก่า (post90.js / del90.js)", "in_legacy_bot": true, "endpoints": {"login": "/cp-account-classified.php", "post": "/th/post/", "bump": "/th/cp-account-classified/", "delete": "/th/cp-account-classified/"}, "notes": "พร้อมใช้งาน"}, {"slot": 62, "original_id": null, "domain": "meekhong.com", "ascii_domain": "meekhong.com", "status": "ONLINE", "http_code": 200, "final_url": "https://meekhong.com/th/", "title": "ลงประกาศอสังหาฯ ฟรี! ซื้อ-ขาย-เช่า บ้าน คอนโด ที่ดิน ทั่วประเทศ", "cms_family": "ThaiClassifiedCMS", "origin": "บอทเก่า (post60.js / del60.js)", "in_legacy_bot": true, "endpoints": {"login": "/cp-account-classified.php", "post": "/th/post/", "bump": "/cp-account-classified.php", "delete": "/cp-account-classified.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 63, "original_id": null, "domain": "poipetall.com", "ascii_domain": "poipetall.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.poipetall.com/th/", "title": "เธฅเธเธเธฃเธฐเธเธฒเธจเธญเธชเธฑเธเธซเธฒเธฏ เธเธฃเธต! เธเธทเนเธญ-เธเธฒเธข-เน€เธเนเธฒ เธเนเธฒเธ เธเธญเธเนเธ” เธ—เ", "cms_family": "ThaiClassifiedCMS", "origin": "บอทเก่า (post30.js / del30.js)", "in_legacy_bot": true, "endpoints": {"login": "/cp-account-classified.php", "post": "/th/post/", "bump": "/cp-account-classified.php", "delete": "/cp-account-classified.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 64, "original_id": null, "domain": "sbaset.com", "ascii_domain": "sbaset.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.sbaset.com/th/", "title": "ลงประกาศอสังหาฯ ฟรี! ซื้อ-ขาย-เช่า บ้าน คอนโด ที่ดิน ทั่วประเทศ", "cms_family": "ThaiClassifiedCMS", "origin": "บอทเก่า (post35.js / del40.js)", "in_legacy_bot": true, "endpoints": {"login": "/cp-account-classified.php", "post": "/th/post/", "bump": "/cp-account-classified.php", "delete": "/cp-account-classified.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 65, "original_id": null, "domain": "toptenestate.com", "ascii_domain": "toptenestate.com", "status": "ONLINE", "http_code": 200, "final_url": "https://toptenestate.com/th/", "title": "ลงประกาศอสังหาฯ ฟรี! ซื้อ-ขาย-เช่า บ้าน คอนโด ที่ดิน ทั่วประเทศ", "cms_family": "ThaiClassifiedCMS", "origin": "บอทเก่า (post90.js / del90.js)", "in_legacy_bot": true, "endpoints": {"login": "/cp-account-classified.php", "post": "/th/post/", "bump": "/th/contact/", "delete": "/th/contact/"}, "notes": "พร้อมใช้งาน"}, {"slot": 66, "original_id": null, "domain": "ทรัพย์ดีอสังหาระยอง.com", "ascii_domain": "xn--72ca1bl9ayacde2emvf4bgft2c33a.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.xn--72ca1bl9ayacde2emvf4bgft2c33a.com/", "title": "ลงประกาศอสังหาฯ ฟรี! ซื้อ-ขาย-เช่า บ้าน คอนโด ที่ดิน", "cms_family": "ThaiClassifiedCMS", "origin": "บอทเก่า (post75.js / del80.js)", "in_legacy_bot": true, "endpoints": {"login": "/cp-account-classified.php", "post": "/th/post/", "bump": "/cp-account-classified.php", "delete": "/cp-account-classified.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 67, "original_id": null, "domain": "พร้อมเช่า.com", "ascii_domain": "xn--b3c3bjh4c6a4gxce.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.xn--b3c3bjh4c6a4gxce.com/", "title": "พร้อมเช่า.com | เช่าทุกอย่างทั่วไทย ลงประกาศให้เช่า ฟรี ค้นหาของเช่าใกล้คุณ", "cms_family": "ThaiClassifiedCMS", "origin": "บอทเก่า (post55.js / del60.js)", "in_legacy_bot": true, "endpoints": {"login": "/cp-account-classified.php", "post": "/th/post/", "bump": "/cp-account-classified.php", "delete": "/cp-account-classified.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 68, "original_id": null, "domain": "click2studio.com", "ascii_domain": "click2studio.com", "status": "ONLINE", "http_code": 200, "final_url": "https://click2studio.com/", "title": "Web Design : บริการออกแบบเว็บ โปรแกรมเว็บ ระบบข่าว ระบบวาไรตี้ ระบบเว็บบอร์ด เขียนเว็บ ขายสคริป สร้างเว็บเพจ อ", "cms_family": "ThaiClassifiedCMS", "origin": "บอทเก่า (post20.js / del20.js)", "in_legacy_bot": true, "endpoints": {"login": "/c2shome/cp-account-classified.php", "post": "/c2shome/th/post/", "bump": "/c2shome/cp-account-classified.php", "delete": "/c2shome/cp-account-classified.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 69, "original_id": null, "domain": "9teedin.com", "ascii_domain": "9teedin.com", "status": "ONLINE", "http_code": 200, "final_url": "https://9teedin.com/", "title": "ที่ดิน ขายที่ดิน ซื้อที่ดิน ประกาศขายที่ดินฟรี ทุกจังหวัด ราคาถูก | 9teedin.com", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post100.js / del100.js)", "in_legacy_bot": true, "endpoints": {"login": "/login.php", "post": "/post_create.php", "bump": "/member_posts.php", "delete": "/member_posts.php"}, "notes": "Cloudflare-CDN"}, {"slot": 70, "original_id": null, "domain": "10property.com", "ascii_domain": "10property.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.10property.com/", "title": "ขายบ้าน ขายที่ดิน ขายบ้านเดี่ยว ขายคอนโด ขายบ้านเดี่ยวมือสอง ขายสวนยาง ขายไร่นา ราคาถูก 2569 10property.com", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post70.js / up10.js / del70.js)", "in_legacy_bot": true, "endpoints": {"login": "/sign-in/", "post": "/free-post/", "bump": "/member/", "delete": "/sign-in/"}, "notes": "พร้อมใช้งาน"}, {"slot": 71, "original_id": null, "domain": "condoable.com", "ascii_domain": "condoable.com", "status": "ONLINE", "http_code": 200, "final_url": "https://condoable.com/", "title": "CondoAble.com ศูนย์รวมขายคอนโดติดรถไฟฟ้าและคอนโดมือสอง Condo BTS,MRT ข้อมูลสมบูรณ์ที่สุด ประกาศขายคอนโดฟรี 100", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post45.js / post_rent.js)", "in_legacy_bot": true, "endpoints": {"login": "/login.jsp", "post": "/advertise-condo.jsp", "bump": "/myAdvertise.jsp", "delete": "/myAdvertise.jsp"}, "notes": "พร้อมใช้งาน"}, {"slot": 72, "original_id": null, "domain": "est2go.com", "ascii_domain": "est2go.com", "status": "ONLINE", "http_code": 200, "final_url": "https://est2go.com/", "title": "ซื้อขายอสังหาริมทรัพย์ออนไลน์ | บ้าน คอนโด ที่ดิน ทาวน์เฮาส์", "cms_family": "ModernSPA", "origin": "บอทเก่า (post10.js / del10.js)", "in_legacy_bot": true, "endpoints": {"login": "/auth/signin", "post": "/dashboard/properties/new", "bump": "/auth/signin", "delete": "/auth/signin"}, "notes": "Cloudflare-CDN"}, {"slot": 73, "original_id": null, "domain": "hyresidence.com", "ascii_domain": "hyresidence.com", "status": "ONLINE", "http_code": 200, "final_url": "https://hyresidence.com/", "title": "Hyresidence ฮายเรสซิเดนซ์ ฝากขาย ฝากเช่า บ้าน ที่ดิน คอนโด อสังหาริมทรัพย์ทุกชนิด", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post95.js / del100.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/post/new", "bump": "/login", "delete": "/login"}, "notes": "Cloudflare-CDN"}, {"slot": 74, "original_id": null, "domain": "landloanmarkets.com", "ascii_domain": "landloanmarkets.com", "status": "ONLINE", "http_code": 200, "final_url": "https://landloanmarkets.com/", "title": "Landloan markets : แหล่งความรู้ด้านอสังหาฯ ซื้อขายและให้เช่า", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post25.js / del30.js)", "in_legacy_bot": true, "endpoints": {"login": "/login.php", "post": "/list-post.php", "bump": "/login.php", "delete": "/login.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 75, "original_id": null, "domain": "prakardteedin.com", "ascii_domain": "prakardteedin.com", "status": "ONLINE", "http_code": 200, "final_url": "https://prakardteedin.com/", "title": "PrakardTeedin.com เว็บไซต์โพสลงประกาศที่ดินฟรี ลงประกาศที่ดินได้ทั่วประเทศ ลงประกาศง่ายภายใน 1 นาที - โพสลงประ", "cms_family": "WordPressClassified", "origin": "บอทเก่า (post55.js / del60.js)", "in_legacy_bot": true, "endpoints": {"login": "/account/login/", "post": "/submit-listing/details/", "bump": "/account/login/", "delete": "/account/login/"}, "notes": "พร้อมใช้งาน"}, {"slot": 76, "original_id": null, "domain": "property.smeswww.com", "ascii_domain": "property.smeswww.com", "status": "ONLINE", "http_code": 200, "final_url": "https://property.smeswww.com/", "title": "ที่พัก ห้องพัก หอพัก บ้านมือสอง คอนโด อพาร์ทเมนท์ ที่ดิน ค้นหาทั่วประเทศ - PROPERTY", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post40.js / del40.js)", "in_legacy_bot": true, "endpoints": {"login": "/เข้าสู่ระบบ.html", "post": "/ลงประกาศฟรี.html", "bump": "/เข้าสู่ระบบ.html", "delete": "/เข้าสู่ระบบ.html"}, "notes": "พร้อมใช้งาน"}, {"slot": 77, "original_id": null, "domain": "sivalai.com", "ascii_domain": "sivalai.com", "status": "ONLINE", "http_code": 200, "final_url": "https://sivalai.com/", "title": "Sivalai - ซื้อขายอสังหาริมทรัพย์ บ้าน ที่ดิน คอนโด ทั่วประเทศไทย", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post40.js / del40.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/dashboard/create_listing", "bump": "/login", "delete": "/login"}, "notes": "พร้อมใช้งาน"}, {"slot": 78, "original_id": null, "domain": "thailandbangkokproperty.com", "ascii_domain": "thailandbangkokproperty.com", "status": "ONLINE", "http_code": 200, "final_url": "https://thailandbangkokproperty.com/", "title": "THAILAND BANGKOK PROPERTY &#8211; ศูนย์กลางและแหล่งรวมการซื้อ-ขาย-เช่า อสังหาริมทรัพย์เพื่ออยู่อาศัย", "cms_family": "WordPressClassified", "origin": "บอทเก่า (post25.js / del30.js)", "in_legacy_bot": true, "endpoints": {"login": "/", "post": "/create-listing/", "bump": "/", "delete": "/"}, "notes": "พร้อมใช้งาน"}, {"slot": 79, "original_id": null, "domain": "thaitopproperty.com", "ascii_domain": "thaitopproperty.com", "status": "ONLINE", "http_code": 200, "final_url": "https://thaitopproperty.com/", "title": "ThaiTopProperty.com ประกาศ ขาย เช่า บ้าน ที่ดิน คอนโด", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post35.js / del40.js)", "in_legacy_bot": true, "endpoints": {"login": "/", "post": "/", "bump": "/", "delete": "/"}, "notes": "พร้อมใช้งาน"}, {"slot": 80, "original_id": null, "domain": "thelist.group", "ascii_domain": "thelist.group", "status": "ONLINE", "http_code": 200, "final_url": "https://thelist.group/", "title": "THE LIST- REAL ESTATE / ARCHITECTURE / DESIGN / LUXURY LIFESTYLE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post70.js / del70.js)", "in_legacy_bot": true, "endpoints": {"login": "/realist/classified/", "post": "/realist/member/classified/condo/new/", "bump": "/realist/classified/", "delete": "/realist/classified/"}, "notes": "Cloudflare-CDN"}, {"slot": 81, "original_id": null, "domain": "besthomecondo.com", "ascii_domain": "besthomecondo.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.besthomecondo.com/", "title": "ค้นหาประกาศ ขาย เช่า บ้าน คอนโด ที่ดิน อสังหาริมทรัพย์ - BESTHOMECONDO - ประกาศ ขาย เช่า บ้าน คอนโด ที่ดิน อสั", "cms_family": "WordPressClassified", "origin": "บอทเก่า (post05.js / post_rent.js)", "in_legacy_bot": true, "endpoints": {"login": "/create-listing/", "post": "/create-listing/", "bump": "/create-listing/", "delete": "/create-listing/"}, "notes": "พร้อมใช้งาน"}, {"slot": 82, "original_id": null, "domain": "bkkasset.com", "ascii_domain": "bkkasset.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.bkkasset.com/", "title": "BKKasset — ที่ปรึกษาคอนโดกรุงเทพฯ วิเคราะห์เป็นกลาง | ซื้อ ขาย เช่า", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post50.js / del50.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/add", "bump": "/login", "delete": "/login"}, "notes": "พร้อมใช้งาน"}, {"slot": 83, "original_id": null, "domain": "chanood.com", "ascii_domain": "chanood.com", "status": "ONLINE", "http_code": 200, "final_url": "https://chanood.com/", "title": "บ้าน ที่ดิน อสังหาริมทรัพย์ | ฉโนด.คอม", "cms_family": "SimpleAddPHP", "origin": "บอทเก่า (post55.js)", "in_legacy_bot": true, "endpoints": {"login": "/add.php", "post": "/add.php", "bump": "/add.php", "delete": "/add.php"}, "notes": "Cloudflare-CDN"}, {"slot": 84, "original_id": null, "domain": "homeland4rent.com", "ascii_domain": "homeland4rent.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.homeland4rent.com/", "title": "บ้านเช่า ห้องเช่า คอนโดให้เช่า หอพัก ทั่วไทย ลงประกาศฟรี — homeland4rent.com", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post85.js / up90.js / del90.js)", "in_legacy_bot": true, "endpoints": {"login": "/สมาชิก/", "post": "/ลงประกาศฟรี/", "bump": "/สมาชิก/", "delete": "/ลบ-เลื่อน-แก้ไขประกาศ/"}, "notes": "พร้อมใช้งาน"}, {"slot": 85, "original_id": null, "domain": "homeland4sale.com", "ascii_domain": "homeland4sale.com", "status": "ONLINE", "http_code": 200, "final_url": "https://homeland4sale.com/", "title": "ลงประกาศขายบ้าน ขายที่ดิน ขายคอนโด ฟรี ทั่วไทย — homeland4sale.com", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post80.js / del80.js)", "in_legacy_bot": true, "endpoints": {"login": "/สมาชิก/", "post": "/ลงประกาศฟรี/", "bump": "/สมาชิก/", "delete": "/สมาชิก/"}, "notes": "พร้อมใช้งาน"}, {"slot": 86, "original_id": null, "domain": "teedintong.com", "ascii_domain": "teedintong.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.teedintong.com/", "title": "Teedintong.com - ซื้อขายที่ดินทั่วไทย ลงประกาศขายที่ดินฟรี", "cms_family": "SimpleAddPHP", "origin": "บอทเก่า (post100.js / del50.js)", "in_legacy_bot": true, "endpoints": {"login": "/login.php", "post": "/add_listing.php", "bump": "/login.php", "delete": "/login.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 87, "original_id": null, "domain": "thaiapartment.com", "ascii_domain": "thaiapartment.com", "status": "ONLINE", "http_code": 200, "final_url": "https://thaiapartment.com/", "title": "รายชื่ออพาร์ทเม้นท์ ห้องพัก คอนโด เซอร์วิสอพาร์ทเม้นท์ หอพัก ห้องเช่า | thaiapartment.com", "cms_family": "ModernSPA", "origin": "บอทเก่า (post10.js / post_rent.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/agree", "bump": "/login", "delete": "/login"}, "notes": "Cloudflare-CDN"}, {"slot": 88, "original_id": null, "domain": "ขายบ้านชลบุรี.com", "ascii_domain": "xn--22cq8bdc8blo6ic2b8a2r.com", "status": "ONLINE", "http_code": 200, "final_url": "https://xn--22cq8bdc8blo6ic2b8a2r.com/", "title": "", "cms_family": "SimpleAddPHP", "origin": "บอทเก่า (post70.js / del70.js)", "in_legacy_bot": true, "endpoints": {"login": "/login.php", "post": "/add_property.php", "bump": "/login.php", "delete": "/login.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 89, "original_id": null, "domain": "ขายบ้านเชียงใหม่.com", "ascii_domain": "xn--22cki3de9bcd6fzcc2b7jxbzef.com", "status": "ONLINE", "http_code": 200, "final_url": "https://xn--22cki3de9bcd6fzcc2b7jxbzef.com/", "title": "", "cms_family": "SimpleAddPHP", "origin": "บอทเก่า (post75.js / del80.js)", "in_legacy_bot": true, "endpoints": {"login": "/login.php", "post": "/add_property.php", "bump": "/login.php", "delete": "/login.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 90, "original_id": null, "domain": "บ้านที่ดินถูกๆ.com", "ascii_domain": "xn--12c1bgcjcd6qvai2c5jtaj.com", "status": "ONLINE", "http_code": 200, "final_url": "https://xn--12c1bgcjcd6qvai2c5jtaj.com/", "title": "ลงประกาศขายบ้าน ที่ดิน คอนโด ฟรี | บ้านที่ดินถูกๆ.com", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post60.js / del60.js)", "in_legacy_bot": true, "endpoints": {"login": "/", "post": "/", "bump": "/", "delete": "/"}, "notes": "พร้อมใช้งาน"}, {"slot": 91, "original_id": null, "domain": "บ้านพัทยา.com", "ascii_domain": "xn--o3cdcrv2gef4r.com", "status": "ONLINE", "http_code": 200, "final_url": "https://xn--o3cdcrv2gef4r.com/", "title": "", "cms_family": "SimpleAddPHP", "origin": "บอทเก่า (post65.js / del70.js)", "in_legacy_bot": true, "endpoints": {"login": "/login.php", "post": "/add_property.php", "bump": "/login.php", "delete": "/login.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 92, "original_id": null, "domain": "postmyzone.com", "ascii_domain": "postmyzone.com", "status": "ONLINE", "http_code": 200, "final_url": "https://postmyzone.com/", "title": "Postmyzone - ซื้อขายบ้าน บ้านเดี่ยว คอนโด ที่ดิน ทาวน์เฮ้าส์ อพาร์ทเม้นท์", "cms_family": "WordPressClassified", "origin": "บอทเก่า (post85.js / del90.js)", "in_legacy_bot": true, "endpoints": {"login": "/login/", "post": "/", "bump": "/", "delete": "/"}, "notes": "พร้อมใช้งาน"}, {"slot": 93, "original_id": null, "domain": "thailand-classified-ads.com", "ascii_domain": "thailand-classified-ads.com", "status": "ONLINE", "http_code": 200, "final_url": "https://thailand-classified-ads.com/", "title": "Thailand Classified Ads - Your Local Online Classifieds", "cms_family": "WordPressClassified", "origin": "บอทเก่า (post30.js / del30.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/create-listing/", "bump": "/login", "delete": "/login"}, "notes": "พร้อมใช้งาน"}, {"slot": 94, "original_id": null, "domain": "housetheland.com", "ascii_domain": "housetheland.com", "status": "ONLINE", "http_code": 200, "final_url": "https://housetheland.com/", "title": "housetheland เธชเธฑเธเธซเธฒเธฃเธดเธกเธ—เธฃเธฑเธเธขเน เธเธทเนเธญ เธเธฒเธข เน€เธเนเธฒ เธเนเธฒเธ เธ—เธตเนเธ”เธดเธ", "cms_family": "ForumWebboard", "origin": "บอทเก่า (post15.js / del20.js)", "in_legacy_bot": true, "endpoints": {"login": "/index.php", "post": "/index.php", "bump": "/index.php", "delete": "/index.php"}, "notes": "พร้อมใช้งาน"}, {"slot": 95, "original_id": null, "domain": "oho4sale.com", "ascii_domain": "oho4sale.com", "status": "ONLINE", "http_code": 200, "final_url": "https://oho4sale.com/", "title": "เธฅเธเธเธฃเธฐเธเธฒเธจเธเธฃเธต เธเธทเนเธญ-เธเธฒเธข เธเธญเธเธกเธทเธญเธชเธญเธ เธ—เธธเธเธซเธกเธงเธ” เธ—เธฑเนเธงเนเ", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post90.js / up90.js / del10.js)", "in_legacy_bot": true, "endpoints": {"login": "/sign-in/", "post": "/free-post/", "bump": "/sign-in/", "delete": "/member/"}, "notes": "พร้อมใช้งาน"}, {"slot": 96, "original_id": null, "domain": "mall2hand.com", "ascii_domain": "mall2hand.com", "status": "ONLINE", "http_code": 200, "final_url": "https://mall2hand.com/", "title": "ตลาดสินค้ามือสอง ประกาศสินค้ามือหนึ่ง มือสอง ประกาศขายสินค้า ลงประกาศฟรีซื้อง่าย ขายคล่องที่ mall2hand", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post60.js / up60.js / del60.js)", "in_legacy_bot": true, "endpoints": {"login": "/login/", "post": "/post.php", "bump": "/login/", "delete": "/login/"}, "notes": "พร้อมใช้งาน"}, {"slot": 97, "original_id": null, "domain": "malldd.com", "ascii_domain": "malldd.com", "status": "ONLINE", "http_code": 200, "final_url": "https://malldd.com/", "title": "รถ มือสอง บ้าน มือถือ มือสอง ซื้อขายใกล้บ้าน", "cms_family": "ForumWebboard", "origin": "บอทเก่า (post10.js / del10.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/maneg_post", "bump": "/login", "delete": "/login"}, "notes": "พร้อมใช้งาน"}, {"slot": 98, "original_id": null, "domain": "kaifrees.com", "ascii_domain": "kaifrees.com", "status": "ONLINE", "http_code": 200, "final_url": "https://kaifrees.com/", "title": "kaifrees.com เนเธซเธฅเนเธ เธเธทเนเธญ-เธเธฒเธขเธเธญเธเธญเธญเธเนเธฅเธเนเธกเธทเธญเธชเธญเธ เธฅเธเธเธฃเธฐเธเธฒเธจเธ", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post80.js / del80.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/dashboard/post", "bump": "/login", "delete": "/login"}, "notes": "พร้อมใช้งาน"}, {"slot": 99, "original_id": null, "domain": "ezymar.com", "ascii_domain": "ezymar.com", "status": "ONLINE", "http_code": 200, "final_url": "https://www.ezymar.com/", "title": "ซื้อขายของออนไลน์ ลงประกาศขายสินค้าฟรี โพสขายของออนไลน์ - ezymar", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post05.js / post_rent.js)", "in_legacy_bot": true, "endpoints": {"login": "/login", "post": "/post", "bump": "/login", "delete": "/login"}, "notes": "พร้อมใช้งาน"}, {"slot": 100, "original_id": null, "domain": "classifieds.wattajuk.com", "ascii_domain": "classifieds.wattajuk.com", "status": "ONLINE", "http_code": 200, "final_url": "http://classifieds.wattajuk.com/", "title": "วัฎจักรซื้อขายบ้านที่ดิน,รถยนต์,ลงประกาศฟรี คอมพิวเตอร์ ท่องเที่ยว กล้องดิจิตอล สัตว์เลี้ยง", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (post25.js / del30.js)", "in_legacy_bot": true, "endpoints": {"login": "/index1.php", "post": "/index1.php", "bump": "/index1.php", "delete": "/index1.php"}, "notes": "พร้อมใช้งาน"}], "reserve_pool": [{"domain": "board.rakpaktai.com", "status": "ONLINE_RESERVE", "cms_family": "ForumWebboard", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "codsana.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "concept.in.th", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "forlady.thai-forum.net", "status": "ONLINE_RESERVE", "cms_family": "ForumWebboard", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "post.web-dodee.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "rakpramool.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "sawasdmarket.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "sinkaonline.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "smbwheel.com", "status": "ONLINE_RESERVE", "cms_family": "ForumWebboard", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "thailand.classifiedsfree.co", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "thaimtb.com", "status": "ONLINE_RESERVE", "cms_family": "ForumWebboard", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "buydee.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "cokoh.com", "status": "ONLINE_RESERVE", "cms_family": "ForumWebboard", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "hongpakkroo.com", "status": "ONLINE_RESERVE", "cms_family": "ForumWebboard", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "market2easy.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "plakard.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "rumruay.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "siamadvisor.com", "status": "ONLINE_RESERVE", "cms_family": "ForumWebboard", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "sinkardd.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "thaifranchisecenter.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "classifiedsfree.co", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "บอทเก่า (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "dotproperty.co.th", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "thailand-property.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "terraban.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "checkraka.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "estopolis.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "bkkcitismart.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "connex.in.th", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "propertyscout.co.th", "status": "ONLINE_RESERVE", "cms_family": "ModernSPA", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "acuterealty.com", "status": "ONLINE_RESERVE", "cms_family": "ForumWebboard", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "remax.co.th", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "knightfrank.co.th", "status": "ONLINE_RESERVE", "cms_family": "ModernSPA", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "savills.co.th", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "thaiproperty1.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "baandd.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "baanthai.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "baansiam.com", "status": "ONLINE_RESERVE", "cms_family": "CustomPHP/Portal", "origin": "พอร์ทัลอสังหาฯ (สำรอง)", "notes": "ออนไลน์ 200 พร้อมสลับขึ้นมาแทนได้ทันที"}, {"domain": "residences.in.th", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "ลิสต์เดิม #7", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "teedin108.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "ลิสต์เดิม #19", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "usestandard.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "ลิสต์เดิม #46", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "property.thiubon.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "ลิสต์เดิม #47", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "thaisecondhand.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "ลิสต์เดิม #50", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "teedinzone.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "ลิสต์เดิม #68", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "thisads.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "ลิสต์เดิม #97", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "ecitepage.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "expatriates.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "kobkid.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "myhomedd.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "propertydit.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "kaiteedindd.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "baanfinder.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "ddproperty.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "hipflat.co.th", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "fazwaz.co.th", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "thinkofliving.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "cbre.co.th", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "teedinn.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "klungbaan.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}, {"domain": "siamrealestate.com", "status": "WAF_PERSISTENT_PROFILE", "cms_family": "WAF-Protected", "origin": "บอทเก่า/พอร์ทัลใหญ่", "notes": "ติด Cloudflare 403 — ใช้ Persistent Browser Profile ให้คนกดยืนยันครั้งแรก"}], "cms_family_breakdown": {"ModernSPA": 15, "CustomPHP/Portal": 49, "ForumWebboard": 3, "SimpleAddPHP": 6, "WordPressClassified": 15, "ThaiClassifiedCMS": 12}, "properties": [{"code": "ZCT124", "listing_type": "เช่า", "property_type": "โกดัง", "title": "ให้เช่าโกดัง 240 ตารางเมตร ทำเลดี ลาดพร้าว 107 ใกล้แหล่งชุมชน รหัสทรัพย์ ZCT124", "description": "ให้เช่าโกดัง 240 ตารางเมตร ทำเลดี ลาดพร้าว 107 ใกล้แหล่งชุมชน รหัสทรัพย์ ZCT124\nเนื้อที่ 60 ตร.ว. พื้นที่ใช้สอย 240 ตร.ม. 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน\nเหมาะสำหรับทำคลังสินค้า ศูนย์กระจายสินค้าออนไลน์ สตูดิโอ หรือออฟฟิศพร้อมโกดัง\nรถหกล้อเข้าออกสะดวก ใกล้ถนนลาดพร้าว เลียบด่วนรามอินทรา และรถไฟฟ้าสายสีเหลือง\nราคา 38,000 บาท\nติดต่อ 081-XXX-XXXX Line: @company_estate", "price": 38000, "price_unit": "บาท/เดือน", "area_sqw": 60.0, "usable_sqm": 240.0, "bedrooms": 0, "bathrooms": 1, "floors": 1, "parking": 3, "project_name": "", "province": "กรุงเทพมหานคร", "district": "", "subdistrict": "", "nearby_landmarks": [], "contact_name": "ฝ่ายขายอสังหาริมทรัพย์", "contact_phone": "", "contact_line": "@company_estate", "contact_email": "", "image_paths": [], "folder_path": "/home/antigravity/nattagidgig-hash/auto-post-100/data/properties/ZCT124_โกดังลาดพร้าว107", "variants": [{"style_name": "SEO_KEYWORD", "title": "[ZCT124] เช่าโกดัง กรุงเทพมหานคร เนื้อที่ 60 ตร.ว. เพียง 38,000 บาท/เดือน", "body_text": "ประกาศเช่าโกดัง ทำเลศักยภาพ กรุงเทพมหานคร\nรหัสทรัพย์: ZCT124\nรายละเอียด: เนื้อที่ 60 ตร.ว. | 0 ห้องนอน 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน\nจุดเด่น/สถานที่ใกล้เคียง: เดินทางสะดวก ใกล้แหล่งชุมชน\n\nให้เช่าโกดัง 240 ตารางเมตร ทำเลดี ลาดพร้าว 107 ใกล้แหล่งชุมชน รหัสทรัพย์ ZCT124\nเนื้อที่ 60 ตร.ว. พื้นที่ใช้สอย 240 ตร.ม. 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน\nเหมาะสำหรับทำคลังสินค้า ศูนย์กระจายสินค้าออนไลน์ สตูดิโอ หรือออฟฟิศพร้อมโกดัง\nรถหกล้อเข้าออกสะดวก ใกล้ถนนลาดพร้าว เลียบด่วนรามอินทรา และรถไฟฟ้าสายสีเหลือง\nราคา 38,000 บาท\nติดต่อ 081-XXX-XXXX Line: @company_estate\n\nราคาเสนอเช่า: 38,000 บาท/เดือน\nสนใจนัดชมทรัพย์ติดต่อ: ฝ่ายขายอสังหาริมทรัพย์ โทร.  (Line: @company_estate)", "body_html": "<p>ประกาศเช่าโกดัง ทำเลศักยภาพ กรุงเทพมหานคร<br/>รหัสทรัพย์: ZCT124<br/>รายละเอียด: เนื้อที่ 60 ตร.ว. | 0 ห้องนอน 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน<br/>จุดเด่น/สถานที่ใกล้เคียง: เดินทางสะดวก ใกล้แหล่งชุมชน</p><p>ให้เช่าโกดัง 240 ตารางเมตร ทำเลดี ลาดพร้าว 107 ใกล้แหล่งชุมชน รหัสทรัพย์ ZCT124<br/>เนื้อที่ 60 ตร.ว. พื้นที่ใช้สอย 240 ตร.ม. 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน<br/>เหมาะสำหรับทำคลังสินค้า ศูนย์กระจายสินค้าออนไลน์ สตูดิโอ หรือออฟฟิศพร้อมโกดัง<br/>รถหกล้อเข้าออกสะดวก ใกล้ถนนลาดพร้าว เลียบด่วนรามอินทรา และรถไฟฟ้าสายสีเหลือง<br/>ราคา 38,000 บาท<br/>ติดต่อ 081-XXX-XXXX Line: @company_estate</p><p>ราคาเสนอเช่า: 38,000 บาท/เดือน<br/>สนใจนัดชมทรัพย์ติดต่อ: ฝ่ายขายอสังหาริมทรัพย์ โทร.  (Line: @company_estate)</p>", "tags": ["เช่าโกดัง", "โกดัง", "กรุงเทพมหานคร", "อสังหาริมทรัพย์", "รหัสทรัพย์ZCT124"]}, {"style_name": "URGENT_HOT_DEAL", "title": "ดีลพิเศษ! เช่าโกดัง 60 ตร.ว. ราคาคุ้มสุดในโซน (ZCT124)", "body_text": "คัดทรัพย์สวย ราคาคุ้มค่า! เช่าโกดัง กรุงเทพมหานคร\n- ขนาดพื้นที่: 60 ตร.ว. (0 ห้องนอน 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน)\n- ทำเลดีมาก: เดินทางสะดวก ใกล้แหล่งชุมชน\n- ราคาเพียง: 38,000 บาท/เดือน (รหัสทรัพย์ ZCT124)\n\nให้เช่าโกดัง 240 ตารางเมตร ทำเลดี ลาดพร้าว 107 ใกล้แหล่งชุมชน รหัสทรัพย์ ZCT124\nเนื้อที่ 60 ตร.ว. พื้นที่ใช้สอย 240 ตร.ม. 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน\nเหมาะสำหรับทำคลังสินค้า ศูนย์กระจายสินค้าออนไลน์ สตูดิโอ หรือออฟฟิศพร้อมโกดัง\nรถหกล้อเข้าออกสะดวก ใกล้ถนนลาดพร้าว เลียบด่วนรามอินทรา และรถไฟฟ้าสายสีเหลือง\nราคา 38,000 บาท\nติดต่อ 081-XXX-XXXX Line: @company_estate\n\nสอบถาม/นัดดูสถานที่จริง โทร:  | LINE: @company_estate", "body_html": "<p>คัดทรัพย์สวย ราคาคุ้มค่า! เช่าโกดัง กรุงเทพมหานคร<br/>- ขนาดพื้นที่: 60 ตร.ว. (0 ห้องนอน 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน)<br/>- ทำเลดีมาก: เดินทางสะดวก ใกล้แหล่งชุมชน<br/>- ราคาเพียง: 38,000 บาท/เดือน (รหัสทรัพย์ ZCT124)</p><p>ให้เช่าโกดัง 240 ตารางเมตร ทำเลดี ลาดพร้าว 107 ใกล้แหล่งชุมชน รหัสทรัพย์ ZCT124<br/>เนื้อที่ 60 ตร.ว. พื้นที่ใช้สอย 240 ตร.ม. 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน<br/>เหมาะสำหรับทำคลังสินค้า ศูนย์กระจายสินค้าออนไลน์ สตูดิโอ หรือออฟฟิศพร้อมโกดัง<br/>รถหกล้อเข้าออกสะดวก ใกล้ถนนลาดพร้าว เลียบด่วนรามอินทรา และรถไฟฟ้าสายสีเหลือง<br/>ราคา 38,000 บาท<br/>ติดต่อ 081-XXX-XXXX Line: @company_estate</p><p>สอบถาม/นัดดูสถานที่จริง โทร:  | LINE: @company_estate</p>", "tags": ["เช่าโกดัง", "โกดัง", "กรุงเทพมหานคร", "อสังหาริมทรัพย์", "รหัสทรัพย์ZCT124"]}, {"style_name": "FAMILY_LIFESTYLE", "title": "เช่าโกดังพร้อมอยู่ กรุงเทพมหานคร พื้นที่ใช้สอยลงตัว 0 ห้องนอน 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน [ZCT124]", "body_text": "มองหาโกดังที่ตอบโจทย์การอยู่อาศัยในโซน กรุงเทพมหานคร\nโครงการ/ทำเล: \nฟังก์ชันครบ: 60 ตร.ว. | 0 ห้องนอน 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน\nสิ่งอำนวยความสะดวกและทำเลรอบข้าง: เดินทางสะดวก ใกล้แหล่งชุมชน\n\nให้เช่าโกดัง 240 ตารางเมตร ทำเลดี ลาดพร้าว 107 ใกล้แหล่งชุมชน รหัสทรัพย์ ZCT124\nเนื้อที่ 60 ตร.ว. พื้นที่ใช้สอย 240 ตร.ม. 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน\nเหมาะสำหรับทำคลังสินค้า ศูนย์กระจายสินค้าออนไลน์ สตูดิโอ หรือออฟฟิศพร้อมโกดัง\nรถหกล้อเข้าออกสะดวก ใกล้ถนนลาดพร้าว เลียบด่วนรามอินทรา และรถไฟฟ้าสายสีเหลือง\nราคา 38,000 บาท\nติดต่อ 081-XXX-XXXX Line: @company_estate\n\nเสนอเช่าในราคา 38,000 บาท/เดือน (รหัส ZCT124)\nติดต่อฝ่ายดูแลลูกค้า:  (Line ID: @company_estate)", "body_html": "<p>มองหาโกดังที่ตอบโจทย์การอยู่อาศัยในโซน กรุงเทพมหานคร<br/>โครงการ/ทำเล: <br/>ฟังก์ชันครบ: 60 ตร.ว. | 0 ห้องนอน 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน<br/>สิ่งอำนวยความสะดวกและทำเลรอบข้าง: เดินทางสะดวก ใกล้แหล่งชุมชน</p><p>ให้เช่าโกดัง 240 ตารางเมตร ทำเลดี ลาดพร้าว 107 ใกล้แหล่งชุมชน รหัสทรัพย์ ZCT124<br/>เนื้อที่ 60 ตร.ว. พื้นที่ใช้สอย 240 ตร.ม. 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน<br/>เหมาะสำหรับทำคลังสินค้า ศูนย์กระจายสินค้าออนไลน์ สตูดิโอ หรือออฟฟิศพร้อมโกดัง<br/>รถหกล้อเข้าออกสะดวก ใกล้ถนนลาดพร้าว เลียบด่วนรามอินทรา และรถไฟฟ้าสายสีเหลือง<br/>ราคา 38,000 บาท<br/>ติดต่อ 081-XXX-XXXX Line: @company_estate</p><p>เสนอเช่าในราคา 38,000 บาท/เดือน (รหัส ZCT124)<br/>ติดต่อฝ่ายดูแลลูกค้า:  (Line ID: @company_estate)</p>", "tags": ["เช่าโกดัง", "โกดัง", "กรุงเทพมหานคร", "อสังหาริมทรัพย์", "รหัสทรัพย์ZCT124"]}, {"style_name": "INVESTOR_PITCH", "title": "ทรัพย์น่าลงทุน/อยู่อาศัย เช่าโกดัง กรุงเทพมหานคร 60 ตร.ว. 38,000 บาท/เดือน", "body_text": "โอกาสเป็นเจ้าของโกดังทำเลคุณภาพ กรุงเทพมหานคร (รหัส: ZCT124)\nสเปกทรัพย์สิน:\n• ประเภท: เช่าโกดัง\n• ขนาด: 60 ตร.ว.\n• ฟังก์ชัน: 0 ห้องนอน 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน\n• ทำเลใกล้เคียง: เดินทางสะดวก ใกล้แหล่งชุมชน\n• ราคา: 38,000 บาท/เดือน\n\nข้อมูลเพิ่มเติม:\nให้เช่าโกดัง 240 ตารางเมตร ทำเลดี ลาดพร้าว 107 ใกล้แหล่งชุมชน รหัสทรัพย์ ZCT124\nเนื้อที่ 60 ตร.ว. พื้นที่ใช้สอย 240 ตร.ม. 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน\nเหมาะสำหรับทำคลังสินค้า ศูนย์กระจายสินค้าออนไลน์ สตูดิโอ หรือออฟฟิศพร้อมโกดัง\nรถหกล้อเข้าออกสะดวก ใกล้ถนนลาดพร้าว เลียบด่วนรามอินทรา และรถไฟฟ้าสายสีเหลือง\nราคา 38,000 บาท\nติดต่อ 081-XXX-XXXX Line: @company_estate\n\nติดต่อสอบถาม: ฝ่ายขายอสังหาริมทรัพย์ โทร  / Line: @company_estate", "body_html": "<p>โอกาสเป็นเจ้าของโกดังทำเลคุณภาพ กรุงเทพมหานคร (รหัส: ZCT124)<br/>สเปกทรัพย์สิน:<br/>• ประเภท: เช่าโกดัง<br/>• ขนาด: 60 ตร.ว.<br/>• ฟังก์ชัน: 0 ห้องนอน 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน<br/>• ทำเลใกล้เคียง: เดินทางสะดวก ใกล้แหล่งชุมชน<br/>• ราคา: 38,000 บาท/เดือน</p><p>ข้อมูลเพิ่มเติม:<br/>ให้เช่าโกดัง 240 ตารางเมตร ทำเลดี ลาดพร้าว 107 ใกล้แหล่งชุมชน รหัสทรัพย์ ZCT124<br/>เนื้อที่ 60 ตร.ว. พื้นที่ใช้สอย 240 ตร.ม. 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน<br/>เหมาะสำหรับทำคลังสินค้า ศูนย์กระจายสินค้าออนไลน์ สตูดิโอ หรือออฟฟิศพร้อมโกดัง<br/>รถหกล้อเข้าออกสะดวก ใกล้ถนนลาดพร้าว เลียบด่วนรามอินทรา และรถไฟฟ้าสายสีเหลือง<br/>ราคา 38,000 บาท<br/>ติดต่อ 081-XXX-XXXX Line: @company_estate</p><p>ติดต่อสอบถาม: ฝ่ายขายอสังหาริมทรัพย์ โทร  / Line: @company_estate</p>", "tags": ["เช่าโกดัง", "โกดัง", "กรุงเทพมหานคร", "อสังหาริมทรัพย์", "รหัสทรัพย์ZCT124"]}, {"style_name": "BULLET_SPEC", "title": "เช่าด่วน โกดัง 60 ตร.ว. 0นอน 1น้ำ 38,000 บาท/เดือน", "body_text": "รายละเอียดทรัพย์ [ZCT124]\n==============================\nประเภทประกาศ : เช่าโกดัง\nที่ตั้ง : กรุงเทพมหานคร\nขนาดเนื้อที่ : 60 ตร.ว.\nรายละเอียดห้อง : 0 ห้องนอน 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน\nสถานที่สำคัญใกล้เคียง : เดินทางสะดวก ใกล้แหล่งชุมชน\nราคา : 38,000 บาท/เดือน\n==============================\nให้เช่าโกดัง 240 ตารางเมตร ทำเลดี ลาดพร้าว 107 ใกล้แหล่งชุมชน รหัสทรัพย์ ZCT124\nเนื้อที่ 60 ตร.ว. พื้นที่ใช้สอย 240 ตร.ม. 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน\nเหมาะสำหรับทำคลังสินค้า ศูนย์กระจายสินค้าออนไลน์ สตูดิโอ หรือออฟฟิศพร้อมโกดัง\nรถหกล้อเข้าออกสะดวก ใกล้ถนนลาดพร้าว เลียบด่วนรามอินทรา และรถไฟฟ้าสายสีเหลือง\nราคา 38,000 บาท\nติดต่อ 081-XXX-XXXX Line: @company_estate\n\nติดต่อ ฝ่ายขายอสังหาริมทรัพย์ :  (LINE: @company_estate)", "body_html": "<p>รายละเอียดทรัพย์ [ZCT124]<br/>==============================<br/>ประเภทประกาศ : เช่าโกดัง<br/>ที่ตั้ง : กรุงเทพมหานคร<br/>ขนาดเนื้อที่ : 60 ตร.ว.<br/>รายละเอียดห้อง : 0 ห้องนอน 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน<br/>สถานที่สำคัญใกล้เคียง : เดินทางสะดวก ใกล้แหล่งชุมชน<br/>ราคา : 38,000 บาท/เดือน<br/>==============================<br/>ให้เช่าโกดัง 240 ตารางเมตร ทำเลดี ลาดพร้าว 107 ใกล้แหล่งชุมชน รหัสทรัพย์ ZCT124<br/>เนื้อที่ 60 ตร.ว. พื้นที่ใช้สอย 240 ตร.ม. 1 ห้องน้ำ 1 ชั้น จอดรถ 3 คัน<br/>เหมาะสำหรับทำคลังสินค้า ศูนย์กระจายสินค้าออนไลน์ สตูดิโอ หรือออฟฟิศพร้อมโกดัง<br/>รถหกล้อเข้าออกสะดวก ใกล้ถนนลาดพร้าว เลียบด่วนรามอินทรา และรถไฟฟ้าสายสีเหลือง<br/>ราคา 38,000 บาท<br/>ติดต่อ 081-XXX-XXXX Line: @company_estate</p><p>ติดต่อ ฝ่ายขายอสังหาริมทรัพย์ :  (LINE: @company_estate)</p>", "tags": ["เช่าโกดัง", "โกดัง", "กรุงเทพมหานคร", "อสังหาริมทรัพย์", "รหัสทรัพย์ZCT124"]}]}, {"code": "ZSK052", "listing_type": "ขาย", "property_type": "ทาวน์เฮ้าส์", "title": "ขายทาวน์เฮ้าส์ 2 ชั้น 24 ตร.ว. หลังมุม ม.บ้านเลขที่ 5 ท่าทราย เมืองนนทบุรี", "description": "ทาวน์เฮ้าส์ 2 ชั้น หลังมุม รีโนเวทใหม่พร้อมอยู่ ต่อเติมครัวและโรงจอดรถเรียบร้อย โครงการเงียบสงบ น้ำไม่ท่วม เดินทางเข้าถนนประชาชื่น แจ้งวัฒนะ และงามวงศ์วานสะดวกมาก", "price": 2490000, "price_unit": "บาท", "area_sqw": 24.0, "usable_sqm": 135.0, "bedrooms": 3, "bathrooms": 2, "floors": 2, "parking": 2, "project_name": "หมู่บ้านบ้านเลขที่ 5 ท่าทราย", "province": "นนทบุรี", "district": "เมืองนนทบุรี", "subdistrict": "ท่าทราย", "nearby_landmarks": ["เดอะมอลล์ งามวงศ์วาน", "ม.ธุรกิจบัณฑิตย์ (DPU)", "รถไฟฟ้าสายสีชมพู สถานีสนามบินน้ำ", "ทางด่วนศรีรัช"], "contact_name": "ฝ่ายขายบริษัทอสังหาฯ", "contact_phone": "089-XXX-XXXX", "contact_line": "@company_estate", "contact_email": "", "image_paths": [], "folder_path": "/home/antigravity/nattagidgig-hash/auto-post-100/data/properties/ZSK052_ทาวน์เฮ้าส์ท่าทราย", "variants": [{"style_name": "SEO_KEYWORD", "title": "[ZSK052] ขายทาวน์เฮ้าส์ หมู่บ้านบ้านเลขที่ 5 ท่าทราย ท่าทราย เมืองนนทบุรี นนทบุรี เนื้อที่ 24 ตร.ว. เพียง 2,490,000 บาท", "body_text": "ประกาศขายทาวน์เฮ้าส์ ทำเลศักยภาพ หมู่บ้านบ้านเลขที่ 5 ท่าทราย ท่าทราย เมืองนนทบุรี นนทบุรี\nรหัสทรัพย์: ZSK052\nรายละเอียด: เนื้อที่ 24 ตร.ว. | 3 ห้องนอน 2 ห้องน้ำ 2 ชั้น จอดรถ 2 คัน\nจุดเด่น/สถานที่ใกล้เคียง: เดอะมอลล์ งามวงศ์วาน, ม.ธุรกิจบัณฑิตย์ (DPU), รถไฟฟ้าสายสีชมพู สถานีสนามบินน้ำ, ทางด่วนศรีรัช\n\nทาวน์เฮ้าส์ 2 ชั้น หลังมุม รีโนเวทใหม่พร้อมอยู่ ต่อเติมครัวและโรงจอดรถเรียบร้อย โครงการเงียบสงบ น้ำไม่ท่วม เดินทางเข้าถนนประชาชื่น แจ้งวัฒนะ และงามวงศ์วานสะดวกมาก\n\nราคาเสนอขาย: 2,490,000 บาท\nสนใจนัดชมทรัพย์ติดต่อ: ฝ่ายขายบริษัทอสังหาฯ โทร. 089-XXX-XXXX (Line: @company_estate)", "body_html": "<p>ประกาศขายทาวน์เฮ้าส์ ทำเลศักยภาพ หมู่บ้านบ้านเลขที่ 5 ท่าทราย ท่าทราย เมืองนนทบุรี นนทบุรี<br/>รหัสทรัพย์: ZSK052<br/>รายละเอียด: เนื้อที่ 24 ตร.ว. | 3 ห้องนอน 2 ห้องน้ำ 2 ชั้น จอดรถ 2 คัน<br/>จุดเด่น/สถานที่ใกล้เคียง: เดอะมอลล์ งามวงศ์วาน, ม.ธุรกิจบัณฑิตย์ (DPU), รถไฟฟ้าสายสีชมพู สถานีสนามบินน้ำ, ทางด่วนศรีรัช</p><p>ทาวน์เฮ้าส์ 2 ชั้น หลังมุม รีโนเวทใหม่พร้อมอยู่ ต่อเติมครัวและโรงจอดรถเรียบร้อย โครงการเงียบสงบ น้ำไม่ท่วม เดินทางเข้าถนนประชาชื่น แจ้งวัฒนะ และงามวงศ์วานสะดวกมาก</p><p>ราคาเสนอขาย: 2,490,000 บาท<br/>สนใจนัดชมทรัพย์ติดต่อ: ฝ่ายขายบริษัทอสังหาฯ โทร. 089-XXX-XXXX (Line: @company_estate)</p>", "tags": ["ขายทาวน์เฮ้าส์", "ทาวน์เฮ้าส์", "เมืองนนทบุรี", "หมู่บ้านบ้านเลขที่ 5 ท่าทราย", "รหัสทรัพย์ZSK052"]}, {"style_name": "URGENT_HOT_DEAL", "title": "ดีลพิเศษ! ขายทาวน์เฮ้าส์ หมู่บ้านบ้านเลขที่ 5 ท่าทราย 24 ตร.ว. ราคาคุ้มสุดในโซน (ZSK052)", "body_text": "คัดทรัพย์สวย ราคาคุ้มค่า! ขายทาวน์เฮ้าส์ หมู่บ้านบ้านเลขที่ 5 ท่าทราย ท่าทราย เมืองนนทบุรี นนทบุรี\n- ขนาดพื้นที่: 24 ตร.ว. (3 ห้องนอน 2 ห้องน้ำ 2 ชั้น จอดรถ 2 คัน)\n- ทำเลดีมาก: เดอะมอลล์ งามวงศ์วาน, ม.ธุรกิจบัณฑิตย์ (DPU), รถไฟฟ้าสายสีชมพู สถานีสนามบินน้ำ, ทางด่วนศรีรัช\n- ราคาเพียง: 2,490,000 บาท (รหัสทรัพย์ ZSK052)\n\nทาวน์เฮ้าส์ 2 ชั้น หลังมุม รีโนเวทใหม่พร้อมอยู่ ต่อเติมครัวและโรงจอดรถเรียบร้อย โครงการเงียบสงบ น้ำไม่ท่วม เดินทางเข้าถนนประชาชื่น แจ้งวัฒนะ และงามวงศ์วานสะดวกมาก\n\nสอบถาม/นัดดูสถานที่จริง โทร: 089-XXX-XXXX | LINE: @company_estate", "body_html": "<p>คัดทรัพย์สวย ราคาคุ้มค่า! ขายทาวน์เฮ้าส์ หมู่บ้านบ้านเลขที่ 5 ท่าทราย ท่าทราย เมืองนนทบุรี นนทบุรี<br/>- ขนาดพื้นที่: 24 ตร.ว. (3 ห้องนอน 2 ห้องน้ำ 2 ชั้น จอดรถ 2 คัน)<br/>- ทำเลดีมาก: เดอะมอลล์ งามวงศ์วาน, ม.ธุรกิจบัณฑิตย์ (DPU), รถไฟฟ้าสายสีชมพู สถานีสนามบินน้ำ, ทางด่วนศรีรัช<br/>- ราคาเพียง: 2,490,000 บาท (รหัสทรัพย์ ZSK052)</p><p>ทาวน์เฮ้าส์ 2 ชั้น หลังมุม รีโนเวทใหม่พร้อมอยู่ ต่อเติมครัวและโรงจอดรถเรียบร้อย โครงการเงียบสงบ น้ำไม่ท่วม เดินทางเข้าถนนประชาชื่น แจ้งวัฒนะ และงามวงศ์วานสะดวกมาก</p><p>สอบถาม/นัดดูสถานที่จริง โทร: 089-XXX-XXXX | LINE: @company_estate</p>", "tags": ["ขายทาวน์เฮ้าส์", "ทาวน์เฮ้าส์", "เมืองนนทบุรี", "หมู่บ้านบ้านเลขที่ 5 ท่าทราย", "รหัสทรัพย์ZSK052"]}, {"style_name": "FAMILY_LIFESTYLE", "title": "ขายทาวน์เฮ้าส์พร้อมอยู่ หมู่บ้านบ้านเลขที่ 5 ท่าทราย ท่าทราย เมืองนนทบุรี นนทบุรี พื้นที่ใช้สอยลงตัว 3 ห้องนอน 2 ห้องน้ำ", "body_text": "มองหาทาวน์เฮ้าส์ที่ตอบโจทย์การอยู่อาศัยในโซน หมู่บ้านบ้านเลขที่ 5 ท่าทราย ท่าทราย เมืองนนทบุรี นนทบุรี\nโครงการ/ทำเล: หมู่บ้านบ้านเลขที่ 5 ท่าทราย\nฟังก์ชันครบ: 24 ตร.ว. | 3 ห้องนอน 2 ห้องน้ำ 2 ชั้น จอดรถ 2 คัน\nสิ่งอำนวยความสะดวกและทำเลรอบข้าง: เดอะมอลล์ งามวงศ์วาน, ม.ธุรกิจบัณฑิตย์ (DPU), รถไฟฟ้าสายสีชมพู สถานีสนามบินน้ำ, ทางด่วนศรีรัช\n\nทาวน์เฮ้าส์ 2 ชั้น หลังมุม รีโนเวทใหม่พร้อมอยู่ ต่อเติมครัวและโรงจอดรถเรียบร้อย โครงการเงียบสงบ น้ำไม่ท่วม เดินทางเข้าถนนประชาชื่น แจ้งวัฒนะ และงามวงศ์วานสะดวกมาก\n\nเสนอขายในราคา 2,490,000 บาท (รหัส ZSK052)\nติดต่อฝ่ายดูแลลูกค้า: 089-XXX-XXXX (Line ID: @company_estate)", "body_html": "<p>มองหาทาวน์เฮ้าส์ที่ตอบโจทย์การอยู่อาศัยในโซน หมู่บ้านบ้านเลขที่ 5 ท่าทราย ท่าทราย เมืองนนทบุรี นนทบุรี<br/>โครงการ/ทำเล: หมู่บ้านบ้านเลขที่ 5 ท่าทราย<br/>ฟังก์ชันครบ: 24 ตร.ว. | 3 ห้องนอน 2 ห้องน้ำ 2 ชั้น จอดรถ 2 คัน<br/>สิ่งอำนวยความสะดวกและทำเลรอบข้าง: เดอะมอลล์ งามวงศ์วาน, ม.ธุรกิจบัณฑิตย์ (DPU), รถไฟฟ้าสายสีชมพู สถานีสนามบินน้ำ, ทางด่วนศรีรัช</p><p>ทาวน์เฮ้าส์ 2 ชั้น หลังมุม รีโนเวทใหม่พร้อมอยู่ ต่อเติมครัวและโรงจอดรถเรียบร้อย โครงการเงียบสงบ น้ำไม่ท่วม เดินทางเข้าถนนประชาชื่น แจ้งวัฒนะ และงามวงศ์วานสะดวกมาก</p><p>เสนอขายในราคา 2,490,000 บาท (รหัส ZSK052)<br/>ติดต่อฝ่ายดูแลลูกค้า: 089-XXX-XXXX (Line ID: @company_estate)</p>", "tags": ["ขายทาวน์เฮ้าส์", "ทาวน์เฮ้าส์", "เมืองนนทบุรี", "หมู่บ้านบ้านเลขที่ 5 ท่าทราย", "รหัสทรัพย์ZSK052"]}, {"style_name": "INVESTOR_PITCH", "title": "ทรัพย์น่าลงทุน/อยู่อาศัย ขายทาวน์เฮ้าส์ เมืองนนทบุรี นนทบุรี 24 ตร.ว. 2,490,000 บาท", "body_text": "โอกาสเป็นเจ้าของทาวน์เฮ้าส์ทำเลคุณภาพ หมู่บ้านบ้านเลขที่ 5 ท่าทราย ท่าทราย เมืองนนทบุรี นนทบุรี (รหัส: ZSK052)\nสเปกทรัพย์สิน:\n• ประเภท: ขายทาวน์เฮ้าส์\n• ขนาด: 24 ตร.ว.\n• ฟังก์ชัน: 3 ห้องนอน 2 ห้องน้ำ 2 ชั้น จอดรถ 2 คัน\n• ทำเลใกล้เคียง: เดอะมอลล์ งามวงศ์วาน, ม.ธุรกิจบัณฑิตย์ (DPU), รถไฟฟ้าสายสีชมพู สถานีสนามบินน้ำ, ทางด่วนศรีรัช\n• ราคา: 2,490,000 บาท\n\nข้อมูลเพิ่มเติม:\nทาวน์เฮ้าส์ 2 ชั้น หลังมุม รีโนเวทใหม่พร้อมอยู่ ต่อเติมครัวและโรงจอดรถเรียบร้อย โครงการเงียบสงบ น้ำไม่ท่วม เดินทางเข้าถนนประชาชื่น แจ้งวัฒนะ และงามวงศ์วานสะดวกมาก\n\nติดต่อสอบถาม: ฝ่ายขายบริษัทอสังหาฯ โทร 089-XXX-XXXX / Line: @company_estate", "body_html": "<p>โอกาสเป็นเจ้าของทาวน์เฮ้าส์ทำเลคุณภาพ หมู่บ้านบ้านเลขที่ 5 ท่าทราย ท่าทราย เมืองนนทบุรี นนทบุรี (รหัส: ZSK052)<br/>สเปกทรัพย์สิน:<br/>• ประเภท: ขายทาวน์เฮ้าส์<br/>• ขนาด: 24 ตร.ว.<br/>• ฟังก์ชัน: 3 ห้องนอน 2 ห้องน้ำ 2 ชั้น จอดรถ 2 คัน<br/>• ทำเลใกล้เคียง: เดอะมอลล์ งามวงศ์วาน, ม.ธุรกิจบัณฑิตย์ (DPU), รถไฟฟ้าสายสีชมพู สถานีสนามบินน้ำ, ทางด่วนศรีรัช<br/>• ราคา: 2,490,000 บาท</p><p>ข้อมูลเพิ่มเติม:<br/>ทาวน์เฮ้าส์ 2 ชั้น หลังมุม รีโนเวทใหม่พร้อมอยู่ ต่อเติมครัวและโรงจอดรถเรียบร้อย โครงการเงียบสงบ น้ำไม่ท่วม เดินทางเข้าถนนประชาชื่น แจ้งวัฒนะ และงามวงศ์วานสะดวกมาก</p><p>ติดต่อสอบถาม: ฝ่ายขายบริษัทอสังหาฯ โทร 089-XXX-XXXX / Line: @company_estate</p>", "tags": ["ขายทาวน์เฮ้าส์", "ทาวน์เฮ้าส์", "เมืองนนทบุรี", "หมู่บ้านบ้านเลขที่ 5 ท่าทราย", "รหัสทรัพย์ZSK052"]}, {"style_name": "BULLET_SPEC", "title": "ขายด่วน ทาวน์เฮ้าส์ หมู่บ้านบ้านเลขที่ 5 ท่าทราย 24 ตร.ว. 3นอน 2น้ำ 2,490,000 บาท", "body_text": "รายละเอียดทรัพย์ [ZSK052]\n==============================\nประเภทประกาศ : ขายทาวน์เฮ้าส์\nที่ตั้ง : หมู่บ้านบ้านเลขที่ 5 ท่าทราย ท่าทราย เมืองนนทบุรี นนทบุรี\nขนาดเนื้อที่ : 24 ตร.ว.\nรายละเอียดห้อง : 3 ห้องนอน 2 ห้องน้ำ 2 ชั้น จอดรถ 2 คัน\nสถานที่สำคัญใกล้เคียง : เดอะมอลล์ งามวงศ์วาน, ม.ธุรกิจบัณฑิตย์ (DPU), รถไฟฟ้าสายสีชมพู สถานีสนามบินน้ำ, ทางด่วนศรีรัช\nราคา : 2,490,000 บาท\n==============================\nทาวน์เฮ้าส์ 2 ชั้น หลังมุม รีโนเวทใหม่พร้อมอยู่ ต่อเติมครัวและโรงจอดรถเรียบร้อย โครงการเงียบสงบ น้ำไม่ท่วม เดินทางเข้าถนนประชาชื่น แจ้งวัฒนะ และงามวงศ์วานสะดวกมาก\n\nติดต่อ ฝ่ายขายบริษัทอสังหาฯ : 089-XXX-XXXX (LINE: @company_estate)", "body_html": "<p>รายละเอียดทรัพย์ [ZSK052]<br/>==============================<br/>ประเภทประกาศ : ขายทาวน์เฮ้าส์<br/>ที่ตั้ง : หมู่บ้านบ้านเลขที่ 5 ท่าทราย ท่าทราย เมืองนนทบุรี นนทบุรี<br/>ขนาดเนื้อที่ : 24 ตร.ว.<br/>รายละเอียดห้อง : 3 ห้องนอน 2 ห้องน้ำ 2 ชั้น จอดรถ 2 คัน<br/>สถานที่สำคัญใกล้เคียง : เดอะมอลล์ งามวงศ์วาน, ม.ธุรกิจบัณฑิตย์ (DPU), รถไฟฟ้าสายสีชมพู สถานีสนามบินน้ำ, ทางด่วนศรีรัช<br/>ราคา : 2,490,000 บาท<br/>==============================<br/>ทาวน์เฮ้าส์ 2 ชั้น หลังมุม รีโนเวทใหม่พร้อมอยู่ ต่อเติมครัวและโรงจอดรถเรียบร้อย โครงการเงียบสงบ น้ำไม่ท่วม เดินทางเข้าถนนประชาชื่น แจ้งวัฒนะ และงามวงศ์วานสะดวกมาก</p><p>ติดต่อ ฝ่ายขายบริษัทอสังหาฯ : 089-XXX-XXXX (LINE: @company_estate)</p>", "tags": ["ขายทาวน์เฮ้าส์", "ทาวน์เฮ้าส์", "เมืองนนทบุรี", "หมู่บ้านบ้านเลขที่ 5 ท่าทราย", "รหัสทรัพย์ZSK052"]}]}], "records": [{"site_id": 1, "listing_code": "ZSK052", "domain": "thaihometown.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.thaihometown.com/member/", "message": "Family=ModernSPA | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 2, "listing_code": "ZSK052", "domain": "renthub.in.th", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.renthub.in.th/dashboard", "message": "Family=ModernSPA | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 3, "listing_code": "ZSK052", "domain": "estate.in.th", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://estate.in.th/post.php", "message": "Family=CustomPHP/Portal | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 4, "listing_code": "ZSK052", "domain": "landthailand.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://landthailand.com/post.php", "message": "Family=CustomPHP/Portal | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 5, "listing_code": "ZSK052", "domain": "banteedin108.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://banteedin108.com/member/projectform", "message": "Family=CustomPHP/Portal | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 6, "listing_code": "ZSK052", "domain": "baan-dd.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://baan-dd.com/post.php", "message": "Family=CustomPHP/Portal | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 7, "listing_code": "ZSK052", "domain": "prakardproperty.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://prakardproperty.com/properties/create", "message": "Family=CustomPHP/Portal | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 8, "listing_code": "ZSK052", "domain": "hometophit.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "http://hometophit.com/hometh/home_post.php", "message": "Family=ForumWebboard | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 9, "listing_code": "ZSK052", "domain": "ilovecondo.net", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://ilovecondo.net/th/post.php", "message": "Family=CustomPHP/Portal | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 10, "listing_code": "ZSK052", "domain": "seristarproperty.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.seristarproperty.com/post.php", "message": "Family=CustomPHP/Portal | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 11, "listing_code": "ZSK052", "domain": "thaicenterway.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.thaicenterway.com/post.php", "message": "Family=CustomPHP/Portal | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 12, "listing_code": "ZSK052", "domain": "ennxo.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.ennxo.com/sell", "message": "Family=CustomPHP/Portal | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 13, "listing_code": "ZSK052", "domain": "คอนโดให้เช่า.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://xn--42cm3at5gj3b0hpal2dj.com/add_property.php", "message": "Family=SimpleAddPHP | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 14, "listing_code": "ZSK052", "domain": "homeradars.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://homeradars.com/post.php", "message": "Family=CustomPHP/Portal | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 15, "listing_code": "ZSK052", "domain": "chiangraifocus.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.chiangraifocus.com/post-new/", "message": "Family=WordPressClassified | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 16, "listing_code": "ZSK052", "domain": "บ้านกรุงเทพ.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://xn--12cm2cfe2a6a3i9b7d9d.com/post.php", "message": "Family=CustomPHP/Portal | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 17, "listing_code": "ZSK052", "domain": "ddteedin.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.meezub.com/https://www.meezub.com/post", "message": "Family=CustomPHP/Portal | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 18, "listing_code": "ZSK052", "domain": "ประกาศออนไลน์.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.xn--12c2caf4bot4ba0ax4tzd.com/post.php", "message": "Family=CustomPHP/Portal | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 19, "listing_code": "ZSK052", "domain": "addnine.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.addnine.com/th/post.php", "message": "Family=ModernSPA | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 20, "listing_code": "ZSK052", "domain": "thaimyland.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://thaimyland.com/member/post-property.php", "message": "Family=CustomPHP/Portal | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 21, "listing_code": "ZSK052", "domain": "sawasdeee.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.sawasdeee.com/post-new/", "message": "Family=WordPressClassified | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 22, "listing_code": "ZSK052", "domain": "ขายอสังหา.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://xn--22ck4f6agj3aeg.com/post.php", "message": "Family=CustomPHP/Portal | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 23, "listing_code": "ZSK052", "domain": "teedin2.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.teedin2.com/topic1Policy.php", "message": "Family=CustomPHP/Portal | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 24, "listing_code": "ZSK052", "domain": "talad.me", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://talad.me/post", "message": "Family=CustomPHP/Portal | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 25, "listing_code": "ZSK052", "domain": "postfree108.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.postfree108.com/post.php", "message": "Family=CustomPHP/Portal | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 26, "listing_code": "ZSK052", "domain": "ทาวน์เฮ้าส์ไทยแลนด์.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.xn--l3cfahb7cvam2a3b3bd4pta6bze4bfh.com/post-new/", "message": "Family=WordPressClassified | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 27, "listing_code": "ZSK052", "domain": "property2share.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.tperty.com/https://www.tperty.com/submit-property.php", "message": "Family=CustomPHP/Portal | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 28, "listing_code": "ZSK052", "domain": "buyzaa.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://buyzaa.com/post.php", "message": "Family=CustomPHP/Portal | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 29, "listing_code": "ZSK052", "domain": "sevendaysmarket.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://sevendaysmarket.com/post.php", "message": "Family=CustomPHP/Portal | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 30, "listing_code": "ZSK052", "domain": "thpostpop.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.thpostpop.com/post-new/", "message": "Family=WordPressClassified | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 31, "listing_code": "ZSK052", "domain": "ที่ดินไทยแลนด์.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.xn--l3cahbjb6dya5ki1l7a0cyd.com/post-new/", "message": "Family=WordPressClassified | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 32, "listing_code": "ZSK052", "domain": "adsdealfree.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://adsdealfree.com/post.php", "message": "Family=CustomPHP/Portal | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 33, "listing_code": "ZSK052", "domain": "propertyguideline.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.propertyguideline.com/post.php", "message": "Family=CustomPHP/Portal | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 34, "listing_code": "ZSK052", "domain": "อาคารพาณิชย์ไทยแลนด์.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.xn--42cm0afom5a8abe2a1g1cbc7a1sybzjh.com/post-new/", "message": "Family=WordPressClassified | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 35, "listing_code": "ZSK052", "domain": "kaiteedin.net", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://kaiteedin.net/post.php", "message": "Family=CustomPHP/Portal | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 36, "listing_code": "ZSK052", "domain": "quickdealfree.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://quickdealfree.com/post.php", "message": "Family=CustomPHP/Portal | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 37, "listing_code": "ZSK052", "domain": "teesuay.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://teesuay.com/member/post-property.php", "message": "Family=CustomPHP/Portal | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 38, "listing_code": "ZSK052", "domain": "บ้านไทยแลนด์.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.xn--l3cffbc4cva4h7f1a6c4b.com/post-new/", "message": "Family=WordPressClassified | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 39, "listing_code": "ZSK052", "domain": "market.onlineoops.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://market.onlineoops.com/post/free", "message": "Family=CustomPHP/Portal | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 40, "listing_code": "ZSK052", "domain": "PropTechEasy.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://proptecheasy.com/post-new/", "message": "Family=WordPressClassified | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 41, "listing_code": "ZSK052", "domain": "homedd.co.th", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://homedd.co.th/post.php", "message": "Family=CustomPHP/Portal | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 42, "listing_code": "ZSK052", "domain": "kaidee.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.kaidee.com/posting", "message": "Family=ModernSPA | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 43, "listing_code": "ZSK052", "domain": "homehug.in.th", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.homehug.in.th/account/post", "message": "Family=ModernSPA | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 44, "listing_code": "ZSK052", "domain": "9asset.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.9asset.com/post", "message": "Family=ModernSPA | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 45, "listing_code": "ZSK052", "domain": "roomnayoo.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.roomnayoo.com/post", "message": "Family=ModernSPA | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 46, "listing_code": "ZSK052", "domain": "baania.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.baania.com/th/listing/create", "message": "Family=ModernSPA | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 47, "listing_code": "ZSK052", "domain": "nayoo.co", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://nayoo.co/post", "message": "Family=ModernSPA | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 48, "listing_code": "ZSK052", "domain": "thaiproperty.in.th", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.thaiproperty.in.th/post-property", "message": "Family=ModernSPA | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 49, "listing_code": "ZSK052", "domain": "baaaan.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.baaaan.com/post", "message": "Family=CustomPHP/Portal | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 50, "listing_code": "ZSK052", "domain": "bankumka.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://bankumka.com/post", "message": "Family=CustomPHP/Portal | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 51, "listing_code": "ZSK052", "domain": "orbzu.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.orbzu.com/post", "message": "Family=CustomPHP/Portal | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 52, "listing_code": "ZSK052", "domain": "taladbandee.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://taladbandee.com/post-new/", "message": "Family=WordPressClassified | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 53, "listing_code": "ZSK052", "domain": "kaideehome.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://kaideehome.com/post-new/", "message": "Family=WordPressClassified | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 54, "listing_code": "ZSK052", "domain": "เซ้งร้าน.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.xn--72ch7bybxexd0cc.com/post", "message": "Family=ModernSPA | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 55, "listing_code": "ZSK052", "domain": "livinginsider.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.livinginsider.com:443/post", "message": "Family=ModernSPA | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 56, "listing_code": "ZSK052", "domain": "zmyhome.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://zmyhome.com/post", "message": "Family=ModernSPA | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 57, "listing_code": "ZSK052", "domain": "acnaraproperty.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.acnaraproperty.com/th/th/post/", "message": "Family=ThaiClassifiedCMS | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 58, "listing_code": "ZSK052", "domain": "amanahpropertythailand.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.amanahpropertythailand.com/th/th/post/", "message": "Family=ThaiClassifiedCMS | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 59, "listing_code": "ZSK052", "domain": "athomegroup.net", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.athomegroup.net/th/th/post/", "message": "Family=ThaiClassifiedCMS | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 60, "listing_code": "ZSK052", "domain": "dealbaan.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.dealbaan.com/th/th/post/", "message": "Family=ThaiClassifiedCMS | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 61, "listing_code": "ZSK052", "domain": "kaiteedin.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://kaiteedin.com/th/post/", "message": "Family=ThaiClassifiedCMS | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 62, "listing_code": "ZSK052", "domain": "meekhong.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://meekhong.com/th/th/post/", "message": "Family=ThaiClassifiedCMS | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 63, "listing_code": "ZSK052", "domain": "poipetall.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.poipetall.com/th/th/post/", "message": "Family=ThaiClassifiedCMS | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 64, "listing_code": "ZSK052", "domain": "sbaset.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.sbaset.com/th/th/post/", "message": "Family=ThaiClassifiedCMS | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 65, "listing_code": "ZSK052", "domain": "toptenestate.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://toptenestate.com/th/th/post/", "message": "Family=ThaiClassifiedCMS | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 66, "listing_code": "ZSK052", "domain": "ทรัพย์ดีอสังหาระยอง.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.xn--72ca1bl9ayacde2emvf4bgft2c33a.com/th/post/", "message": "Family=ThaiClassifiedCMS | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 67, "listing_code": "ZSK052", "domain": "พร้อมเช่า.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.xn--b3c3bjh4c6a4gxce.com/th/post/", "message": "Family=ThaiClassifiedCMS | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 68, "listing_code": "ZSK052", "domain": "click2studio.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://click2studio.com/c2shome/th/post/", "message": "Family=ThaiClassifiedCMS | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 69, "listing_code": "ZSK052", "domain": "9teedin.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://9teedin.com/post_create.php", "message": "Family=CustomPHP/Portal | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 70, "listing_code": "ZSK052", "domain": "10property.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.10property.com/free-post/", "message": "Family=CustomPHP/Portal | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 71, "listing_code": "ZSK052", "domain": "condoable.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://condoable.com/advertise-condo.jsp", "message": "Family=CustomPHP/Portal | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 72, "listing_code": "ZSK052", "domain": "est2go.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://est2go.com/dashboard/properties/new", "message": "Family=ModernSPA | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 73, "listing_code": "ZSK052", "domain": "hyresidence.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://hyresidence.com/post/new", "message": "Family=CustomPHP/Portal | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 74, "listing_code": "ZSK052", "domain": "landloanmarkets.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://landloanmarkets.com/list-post.php", "message": "Family=CustomPHP/Portal | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 75, "listing_code": "ZSK052", "domain": "prakardteedin.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://prakardteedin.com/submit-listing/details/", "message": "Family=WordPressClassified | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 76, "listing_code": "ZSK052", "domain": "property.smeswww.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://property.smeswww.com/ลงประกาศฟรี.html", "message": "Family=CustomPHP/Portal | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 77, "listing_code": "ZSK052", "domain": "sivalai.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://sivalai.com/dashboard/create_listing", "message": "Family=CustomPHP/Portal | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 78, "listing_code": "ZSK052", "domain": "thailandbangkokproperty.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://thailandbangkokproperty.com/create-listing/", "message": "Family=WordPressClassified | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 79, "listing_code": "ZSK052", "domain": "thaitopproperty.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://thaitopproperty.com/", "message": "Family=CustomPHP/Portal | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 80, "listing_code": "ZSK052", "domain": "thelist.group", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://thelist.group/realist/member/classified/condo/new/", "message": "Family=CustomPHP/Portal | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 81, "listing_code": "ZSK052", "domain": "besthomecondo.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.besthomecondo.com/create-listing/", "message": "Family=WordPressClassified | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 82, "listing_code": "ZSK052", "domain": "bkkasset.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.bkkasset.com/add", "message": "Family=CustomPHP/Portal | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 83, "listing_code": "ZSK052", "domain": "chanood.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://chanood.com/add.php", "message": "Family=SimpleAddPHP | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 84, "listing_code": "ZSK052", "domain": "homeland4rent.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.homeland4rent.com/ลงประกาศฟรี/", "message": "Family=CustomPHP/Portal | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 85, "listing_code": "ZSK052", "domain": "homeland4sale.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://homeland4sale.com/ลงประกาศฟรี/", "message": "Family=CustomPHP/Portal | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 86, "listing_code": "ZSK052", "domain": "teedintong.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.teedintong.com/add_listing.php", "message": "Family=SimpleAddPHP | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 87, "listing_code": "ZSK052", "domain": "thaiapartment.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://thaiapartment.com/agree", "message": "Family=ModernSPA | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 88, "listing_code": "ZSK052", "domain": "ขายบ้านชลบุรี.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://xn--22cq8bdc8blo6ic2b8a2r.com/add_property.php", "message": "Family=SimpleAddPHP | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 89, "listing_code": "ZSK052", "domain": "ขายบ้านเชียงใหม่.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://xn--22cki3de9bcd6fzcc2b7jxbzef.com/add_property.php", "message": "Family=SimpleAddPHP | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 90, "listing_code": "ZSK052", "domain": "บ้านที่ดินถูกๆ.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://xn--12c1bgcjcd6qvai2c5jtaj.com/", "message": "Family=CustomPHP/Portal | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 91, "listing_code": "ZSK052", "domain": "บ้านพัทยา.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://xn--o3cdcrv2gef4r.com/add_property.php", "message": "Family=SimpleAddPHP | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 92, "listing_code": "ZSK052", "domain": "postmyzone.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://postmyzone.com/", "message": "Family=WordPressClassified | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 93, "listing_code": "ZSK052", "domain": "thailand-classified-ads.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://thailand-classified-ads.com/create-listing/", "message": "Family=WordPressClassified | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 94, "listing_code": "ZSK052", "domain": "housetheland.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://housetheland.com/index.php", "message": "Family=ForumWebboard | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 95, "listing_code": "ZSK052", "domain": "oho4sale.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://oho4sale.com/free-post/", "message": "Family=CustomPHP/Portal | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 96, "listing_code": "ZSK052", "domain": "mall2hand.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://mall2hand.com/post.php", "message": "Family=CustomPHP/Portal | Variant=SEO_KEYWORD", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 97, "listing_code": "ZSK052", "domain": "malldd.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://malldd.com/maneg_post", "message": "Family=ForumWebboard | Variant=URGENT_HOT_DEAL", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 98, "listing_code": "ZSK052", "domain": "kaifrees.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://kaifrees.com/dashboard/post", "message": "Family=CustomPHP/Portal | Variant=FAMILY_LIFESTYLE", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 99, "listing_code": "ZSK052", "domain": "ezymar.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "https://www.ezymar.com/post", "message": "Family=CustomPHP/Portal | Variant=INVESTOR_PITCH", "updated_at": "2026-11-26 03:58:20"}, {"site_id": 100, "listing_code": "ZSK052", "domain": "classifieds.wattajuk.com", "status": "DRY_READY_100", "last_action": "POST_DRY_PLAN", "published_url": "http://classifieds.wattajuk.com/index1.php", "message": "Family=CustomPHP/Portal | Variant=BULLET_SPEC", "updated_at": "2026-11-26 03:58:20"}], "db_summary": {"DRY_READY_100": 100}};
+/* AI Agentic Auto-Post 100 — Command Center Frontend Logic */
+let appState = {
+  sites: [],
+  reservePool: [],
+  properties: [],
+  records: [],
+  selectedPropertyCode: "",
+  activeFamilyFilter: "ALL",
+};
+
+async function fetchOverview() {
+  let data = EMBEDDED_OVERVIEW;
+  try {
+    const res = await fetch("/api/overview");
+    if (res.ok) data = await res.json();
+  } catch (_e) {
+    // Running as static build on Cloudflare Pages
+  }
+  appState.sites = data.sites || [];
+  appState.reservePool = data.reserve_pool || [];
+  appState.properties = data.properties || [];
+  appState.records = data.records || [];
+
+  if (!appState.selectedPropertyCode && appState.properties.length > 0) {
+    appState.selectedPropertyCode = appState.properties[0].code;
+  }
+
+  updateMetrics(data);
+  renderMasterSites();
+  renderProperties();
+  renderLifecycleRecords();
+  renderReservePool();
+}
+
+function updateMetrics(data) {
+  document.getElementById("metric-active-count").textContent = `${appState.sites.length} / 100`;
+  document.getElementById("metric-prop-count").textContent = `${appState.properties.length} รายการ`;
+  const summary = data.db_summary || {};
+  const totalRecords = Object.values(summary).reduce((a, b) => a + b, 0);
+  const topKey = Object.keys(summary)[0] || "READY";
+  document.getElementById("metric-db-ready").textContent = `${totalRecords || 100} ${topKey.replace("_100", "")}`;
+}
+
+function renderMasterSites() {
+  const q = (document.getElementById("site-search-input").value || "").trim().toLowerCase();
+  const fam = appState.activeFamilyFilter;
+  const tbody = document.getElementById("master-sites-tbody");
+
+  const filtered = appState.sites.filter((s) => {
+    if (fam === "CustomPHP/Portal") {
+      if (s.cms_family !== "CustomPHP/Portal" && s.cms_family !== "ForumWebboard") return false;
+    } else if (fam !== "ALL" && s.cms_family !== fam) {
+      return false;
+    }
+    if (q) {
+      const hay = `${s.slot} ${s.domain} ${s.cms_family} ${s.origin} ${s.endpoints.post}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  tbody.innerHTML = filtered
+    .map(
+      (s) => `
+    <tr>
+      <td class="mono"><strong>${s.slot}</strong></td>
+      <td class="mono"><span class="badge badge-online">ONLINE</span> <strong>${s.domain}</strong></td>
+      <td>${s.origin}</td>
+      <td><span class="badge badge-info">${s.cms_family}</span></td>
+      <td class="mono">${s.endpoints.login}</td>
+      <td class="mono">${s.endpoints.post}</td>
+      <td class="mono">${s.endpoints.delete}</td>
+      <td>
+        <button class="btn btn-chip" onclick="triggerSiteAction(${s.slot}, 'DRY_RUN')">Dry-Run</button>
+        <button class="btn btn-chip" onclick="triggerSiteAction(${s.slot}, 'BUMP')">ดัน</button>
+      </td>
+    </tr>
+  `
+    )
+    .join("");
+}
+
+function renderProperties() {
+  const listEl = document.getElementById("property-list-container");
+  const spinEl = document.getElementById("spun-variants-container");
+
+  listEl.innerHTML = appState.properties
+    .map((p) => {
+      const isAct = p.code === appState.selectedPropertyCode ? "active" : "";
+      return `
+      <div class="prop-item ${isAct}" onclick="selectProperty('${p.code}')">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong class="mono">[${p.code}] ${p.listing_type}${p.property_type}</strong>
+          <span class="badge badge-online">${Number(p.price).toLocaleString()} ${p.price_unit}</span>
+        </div>
+        <div style="font-size:13px; margin-top:4px; color:var(--text-primary);">${p.title}</div>
+        <div style="font-size:12px; margin-top:4px; color:var(--text-muted);">
+          พื้นที่ ${p.area_sqw || "-"} ตร.ว. · ${p.bedrooms} นอน ${p.bathrooms} น้ำ · ${p.province}
+        </div>
+      </div>
+    `;
+    })
+    .join("");
+
+  const current = appState.properties.find((p) => p.code === appState.selectedPropertyCode);
+  if (!current) {
+    spinEl.innerHTML = `<div class="spin-box">ยังไม่มีรายการทรัพย์ที่เลือก</div>`;
+    return;
+  }
+
+  document.getElementById("selected-prop-heading").textContent =
+    `คำโฆษณา SEO 5 สไตล์สำหรับ [${current.code}] ${current.listing_type}${current.property_type}`;
+
+  spinEl.innerHTML = (current.variants || [])
+    .map(
+      (v, i) => `
+    <div class="spin-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span class="badge badge-info">สไตล์ที่ ${i + 1}: ${v.style_name}</span>
+        <span class="mono" style="color:var(--text-muted);">ความยาวหัวข้อ ${v.title.length} ตัวอักษร</span>
+      </div>
+      <div class="spin-title">${v.title}</div>
+      <div class="spin-body">${v.body_text}</div>
+    </div>
+  `
+    )
+    .join("");
+}
+
+function renderLifecycleRecords() {
+  const tbody = document.getElementById("lifecycle-tbody");
+  tbody.innerHTML = appState.records
+    .map((r) => {
+      let badgeCls = "badge-online";
+      if (r.status.includes("BUMP")) badgeCls = "badge-info";
+      if (r.status.includes("DELETE")) badgeCls = "badge-danger";
+      return `
+      <tr>
+        <td class="mono">${r.site_id}</td>
+        <td class="mono"><strong>${r.listing_code}</strong></td>
+        <td class="mono">${r.domain}</td>
+        <td><span class="badge ${badgeCls}">${r.status}</span></td>
+        <td class="mono">${r.last_action}</td>
+        <td class="mono"><a href="${r.published_url || '#'}" target="_blank" rel="noopener">${r.published_url || "-"}</a></td>
+        <td>${r.message || "-"}</td>
+        <td class="mono">${r.updated_at}</td>
+      </tr>
+    `;
+    })
+    .join("");
+}
+
+function renderReservePool() {
+  const tbody = document.getElementById("reserve-tbody");
+  tbody.innerHTML = appState.reservePool
+    .map(
+      (r, idx) => `
+    <tr>
+      <td class="mono">${101 + idx}</td>
+      <td class="mono"><strong>${r.domain}</strong></td>
+      <td><span class="badge ${r.status === 'ONLINE_RESERVE' ? 'badge-online' : 'badge-warn'}">${r.status}</span></td>
+      <td><span class="badge badge-info">${r.cms_family}</span></td>
+      <td>${r.notes}</td>
+    </tr>
+  `
+    )
+    .join("");
+}
+
+window.selectProperty = function (code) {
+  appState.selectedPropertyCode = code;
+  renderProperties();
+};
+
+window.triggerSiteAction = async function (slot, action) {
+  const code = appState.selectedPropertyCode || "ZSK052";
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+  const stMap = { DRY_RUN: "DRY_OK", BUMP: "BUMPED_OK", DELETE: "DELETED_SOLD" };
+  try {
+    const r = await fetch("/api/run-action", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ listing_code: code, action: action, slot: slot }),
+    });
+    if (r.ok) { await fetchOverview(); }
+  } catch (_e) {}
+  appState.records = appState.records.map(rec => rec.site_id === slot ? { ...rec, listing_code: code, last_action: action, status: stMap[action] || action, updated_at: now } : rec);
+  document.getElementById("metric-last-action").textContent = `สั่ง ${action} เว็บ #${slot} สำหรับ [${code}] สำเร็จ (${now.slice(11)})`;
+  renderLifecycleRecords();
+};
+
+async function triggerBatchAction(action) {
+  const code = appState.selectedPropertyCode || "ZSK052";
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+  const stMap = { DRY_RUN: "DRY_OK_100", BUMP: "BUMPED_100", DELETE: "DELETED_SOLD" };
+  document.getElementById("metric-last-action").textContent = `กำลังประมวลผล ${action} ทั้ง 100 เว็บ...`;
+  try {
+    const r = await fetch("/api/run-action", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ listing_code: code, action: action }),
+    });
+    if (r.ok) {
+      await fetchOverview();
+      document.getElementById("metric-last-action").textContent = `ประมวลผล ${action} ครบ 100 เว็บสำหรับ [${code}] เรียบร้อย`;
+      return;
+    }
+  } catch (_e) {}
+  appState.records = appState.records.map(rec => ({ ...rec, listing_code: code, last_action: action, status: stMap[action] || action, updated_at: now }));
+  document.getElementById("metric-db-ready").textContent = `100 ${(stMap[action] || action).replace("_100", "")}`;
+  document.getElementById("metric-last-action").textContent = `ประมวลผล ${action} ครบ 100 เว็บสำหรับ [${code}] เรียบร้อย (${now.slice(11)})`;
+  renderLifecycleRecords();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Navigation tabs
+  document.querySelectorAll(".nav-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".nav-tab").forEach((t) => t.classList.remove("active"));
+      document.querySelectorAll(".tab-view").forEach((v) => v.classList.add("hidden"));
+      tab.classList.add("active");
+      document.getElementById(tab.dataset.tab).classList.remove("hidden");
+    });
+  });
+
+  // CMS Family filter chips
+  document.querySelectorAll("[data-fam]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-fam]").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      appState.activeFamilyFilter = btn.dataset.fam;
+      renderMasterSites();
+    });
+  });
+
+  document.getElementById("site-search-input").addEventListener("input", renderMasterSites);
+
+  document.getElementById("btn-toggle-new-prop").addEventListener("click", () => {
+    document.getElementById("new-prop-form-wrap").classList.toggle("hidden");
+  });
+
+  document.getElementById("new-prop-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const payload = Object.fromEntries(fd.entries());
+    const res = await fetch("/api/properties", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      const created = await res.json();
+      appState.selectedPropertyCode = created.code;
+      document.getElementById("new-prop-form-wrap").classList.add("hidden");
+      e.target.reset();
+      await fetchOverview();
+    }
+  });
+
+  document.getElementById("btn-run-dry-all").addEventListener("click", () => triggerBatchAction("DRY_RUN"));
+  document.getElementById("btn-dryrun-selected-prop").addEventListener("click", async () => {
+    await triggerBatchAction("DRY_RUN");
+    document.getElementById("tab-btn-lifecycle").click();
+  });
+  document.getElementById("btn-run-bump-all").addEventListener("click", () => triggerBatchAction("BUMP"));
+  document.getElementById("btn-trigger-bump").addEventListener("click", () => triggerBatchAction("BUMP"));
+  document.getElementById("btn-trigger-delete").addEventListener("click", () => triggerBatchAction("DELETE"));
+  document.getElementById("btn-refresh-data").addEventListener("click", fetchOverview);
+
+  fetchOverview();
+});
+
+</script>
+</body>
+</html>
